@@ -3,13 +3,21 @@ import cv2
 import json
 import numpy as np
 
+from config import (
+    DATASET_PATH,
+    MODEL_PATH,
+    MODEL_FILE,
+    LABEL_FILE,
+)
 
-def train_model():
 
-    dataset_path = "dataset"
-    model_path = "models"
+def train_model() -> None:
+    """
+    Train the LBPH face recognition model using
+    all registered student images.
+    """
 
-    os.makedirs(model_path, exist_ok=True)
+    os.makedirs(MODEL_PATH, exist_ok=True)
 
     recognizer = cv2.face.LBPHFaceRecognizer_create()
 
@@ -19,22 +27,23 @@ def train_model():
 
     current_label = 0
 
-    # Read every student folder
-    for student_name in os.listdir(dataset_path):
+    for student_name in os.listdir(DATASET_PATH):
 
-        student_folder = os.path.join(dataset_path, student_name)
+        student_folder = os.path.join(DATASET_PATH, student_name)
 
         if not os.path.isdir(student_folder):
             continue
 
         label_map[current_label] = student_name
 
-        # Read every image of the student
         for image_name in os.listdir(student_folder):
 
             image_path = os.path.join(student_folder, image_name)
 
-            image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+            image = cv2.imread(
+                image_path,
+                cv2.IMREAD_GRAYSCALE
+            )
 
             if image is None:
                 continue
@@ -44,15 +53,17 @@ def train_model():
 
         current_label += 1
 
-    # Train recognizer
+    if len(faces) == 0:
+        print("No training images found.")
+        return
+
     recognizer.train(faces, np.array(labels))
 
-    # Save trained model
-    recognizer.save(os.path.join(model_path, "face_trainer.yml"))
+    recognizer.save(MODEL_FILE)
 
-    # Save labels
-    with open(os.path.join(model_path, "labels.json"), "w") as file:
+    with open(LABEL_FILE, "w") as file:
         json.dump(label_map, file, indent=4)
 
     print("\nModel trained successfully!")
-    print(f"Students trained: {len(label_map)}")
+    print(f"Students trained : {len(label_map)}")
+    print(f"Images trained   : {len(faces)}")
