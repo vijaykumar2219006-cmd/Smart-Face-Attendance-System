@@ -13,7 +13,8 @@ choice = input("\nEnter your choice: ")
 
 if choice == "1":
     student_name = input("Enter Student Name: ")
-    register_student(student_name)
+    name = input("Enter Student Name: ")
+    register_student(name)
 
 elif choice == "2":
     train_model()

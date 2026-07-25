@@ -1,30 +1,40 @@
-import csv
 import cv2
 import json
 import os
-from datetime import datetime
+import time
 
 from modules.face_detector import detect_faces
+from config import (
+    MODEL_FILE,
+    LABEL_FILE,
+    ATTENDANCE_PATH,
+    ATTENDANCE_FILE,
+    FACE_WIDTH,
+    FACE_HEIGHT,
+    CONFIDENCE_THRESHOLD,
+)
+from utils import (
+    get_current_date,
+    get_current_time,
+    create_csv_if_not_exists,
+    is_attendance_marked,
+    save_attendance,
+)
 
 
-def mark_attendance():
+def mark_attendance() -> None:
+    """
+    Recognize a student and mark attendance.
+    """
 
     recognizer = cv2.face.LBPHFaceRecognizer_create()
-    recognizer.read(os.path.join("models", "face_trainer.yml"))
+    recognizer.read(MODEL_FILE)
 
-    with open(os.path.join("models", "labels.json"), "r") as file:
+    with open(LABEL_FILE, "r") as file:
         labels = json.load(file)
 
-    attendance_folder = "attendance"
-    os.makedirs(attendance_folder, exist_ok=True)
-
-    attendance_file = os.path.join(attendance_folder, "attendance.csv")
-
-    # Create CSV if it doesn't exist
-    if not os.path.exists(attendance_file):
-        with open(attendance_file, "w", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow(["Name", "Date", "Time"])
+    os.makedirs(ATTENDANCE_PATH, exist_ok=True)
+    create_csv_if_not_exists(ATTENDANCE_FILE)
 
     camera = cv2.VideoCapture(0)
 
@@ -42,66 +52,94 @@ def mark_attendance():
         for (x, y, w, h) in faces:
 
             face = gray[y:y+h, x:x+w]
-            face = cv2.resize(face, (200, 200))
+            face = cv2.resize(face, (FACE_WIDTH, FACE_HEIGHT))
 
             label, confidence = recognizer.predict(face)
 
-            if confidence < 70:
+            if confidence < CONFIDENCE_THRESHOLD:
 
                 name = labels[str(label)]
 
-                today = datetime.now().strftime("%Y-%m-%d")
-                current_time = datetime.now().strftime("%H:%M:%S")
+                today = get_current_date()
+                current_time = get_current_time()
 
-                already_marked = False
-
-                with open(attendance_file, "r") as file:
-                    reader = csv.reader(file)
-
-                    next(reader)
-
-                    for row in reader:
-                        if row[0] == name and row[1] == today:
-                            already_marked = True
-                            break
-
-                if not already_marked:
-
-                    with open(attendance_file, "a", newline="") as file:
-                        writer = csv.writer(file)
-                        writer.writerow([name, today, current_time])
-
-                    status = "Attendance Marked"
+                if is_attendance_marked(
+                    ATTENDANCE_FILE,
+                    name,
+                    today
+                ):
+                    status = "Already Marked Today"
 
                 else:
-                    status = "Already Marked"
+
+                    save_attendance(
+                        ATTENDANCE_FILE,
+                        name,
+                        today,
+                        current_time
+                    )
+
+                    status = "Attendance Marked Successfully"
 
             else:
 
                 name = "Unknown"
                 status = ""
 
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2)
+            color = (0, 255, 0) if name != "Unknown" else (0, 0, 255)
 
-            cv2.putText(
+            cv2.rectangle(
                 frame,
-                name,
-                (x, y-10),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.8,
-                (0,255,0),
+                (x, y),
+                (x+w, y+h),
+                color,
                 2
             )
 
             cv2.putText(
                 frame,
-                status,
-                (10,30),
+                f"Name : {name}",
+                (10, 30),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                0.8,
-                (255,0,0),
+                0.7,
+                color,
                 2
             )
+
+            if name != "Unknown":
+                cv2.putText(
+                    frame,
+                    f"Confidence : {confidence:.2f}",
+                    (10, 65),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.7,
+                    color,
+                    2
+                )
+
+                cv2.putText(
+    frame,
+    status,
+    (10, 100),
+    cv2.FONT_HERSHEY_SIMPLEX,
+    0.9,
+    (0, 255, 255),   # Yellow
+    2
+)
+
+                # Show the final result
+            cv2.imshow("Attendance System", frame)
+
+            print(f"Student : {name}")
+            print(f"Confidence : {confidence:.2f}")
+            print(status)
+
+# Keep the window visible for 3 seconds
+            cv2.waitKey(3000)
+
+            camera.release()
+            cv2.destroyAllWindows()
+            return
 
         cv2.imshow("Attendance System", frame)
 

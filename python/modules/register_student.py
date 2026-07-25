@@ -4,8 +4,7 @@ import os
 from modules.face_detector import detect_faces
 from config import DATASET_PATH, FACE_WIDTH, FACE_HEIGHT, TOTAL_IMAGES
 
-
-def register_student(student_name):
+def register_student(student_name: str):
 
     student_folder = os.path.join(DATASET_PATH, student_name)
     os.makedirs(student_folder, exist_ok=True)
