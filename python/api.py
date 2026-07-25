@@ -6,7 +6,7 @@ from modules.register_student import register_student
 from modules.train_model import train_model
 from modules.attendance import mark_attendance
 
-from config import DATASET_PATH
+from config import DATASET_PATH, ATTENDANCE_FILE, MODEL_FILE
 
 app = Flask(__name__)
 CORS(app)
@@ -23,21 +23,13 @@ def home():
 @app.route("/students", methods=["GET"])
 def get_students():
 
-    if not os.path.exists(DATASET_PATH):
-        return jsonify({
-            "students": []
-        })
-
     students = []
 
     for folder in os.listdir(DATASET_PATH):
-
         folder_path = os.path.join(DATASET_PATH, folder)
 
         if os.path.isdir(folder_path):
             students.append(folder)
-
-    students.sort()
 
     return jsonify({
         "count": len(students),
@@ -88,6 +80,74 @@ def attendance():
         "status": "success",
         "message": "Attendance completed successfully."
     })
+
+@app.route("/attendance-count", methods=["GET"])
+def attendance_count():
+
+    import csv
+    import os
+
+    attendance_file = ATTENDANCE_FILE
+
+    count = 0
+
+    if os.path.exists(attendance_file):
+
+        with open(attendance_file, "r") as file:
+
+            reader = csv.reader(file)
+
+            next(reader, None)
+
+            for row in reader:
+                count += 1
+
+    return jsonify({
+        "count": count
+    })
+
+@app.route("/model-status", methods=["GET"])
+def model_status():
+
+    import os
+
+    if os.path.exists(MODEL_FILE):
+
+        return jsonify({
+            "status": "Ready"
+        })
+
+    return jsonify({
+        "status": "Not Trained"
+    })
+
+@app.route("/students-list", methods=["GET"])
+def students_list():
+
+    students = []
+
+    if os.path.exists(DATASET_PATH):
+
+        for student in os.listdir(DATASET_PATH):
+
+            student_path = os.path.join(DATASET_PATH, student)
+
+            if os.path.isdir(student_path):
+
+                image_count = len(
+                    [
+                        file
+                        for file in os.listdir(student_path)
+                        if file.endswith(".jpg")
+                    ]
+                )
+
+                students.append({
+                    "name": student,
+                    "images": image_count
+                })
+
+    return jsonify(students)
 
 if __name__ == "__main__":
     app.run(debug=True)
