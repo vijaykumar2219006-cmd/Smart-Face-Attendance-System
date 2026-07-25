@@ -1,6 +1,6 @@
 import cv2
 
-# Load Haar Cascade classifier
+# Load Haar Cascade
 face_cascade = cv2.CascadeClassifier(
     cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 )
@@ -8,7 +8,7 @@ face_cascade = cv2.CascadeClassifier(
 camera = cv2.VideoCapture(0)
 
 if not camera.isOpened():
-    print("Error: Could not open camera")
+    print("Could not open webcam")
     exit()
 
 while True:
@@ -26,11 +26,10 @@ while True:
         minSize=(50, 50)
     )
 
-    # Draw rectangle around detected faces
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    cv2.imshow("SmartFace AI - Face Detection", frame)
+    cv2.imshow("Smart Face Attendance System", frame)
 
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
