@@ -1,115 +1,213 @@
 import { useEffect, useState } from "react";
-
 import {
   FaUsers,
   FaClipboardCheck,
   FaBrain,
+  FaUserPlus,
+  FaCamera,
 } from "react-icons/fa";
 
 import StatCard from "../components/StatCard";
-import Button from "../components/Button";
-
 import api from "../services/api";
+import AttendanceChart from "../components/AttendanceChart";
 
 export default function Dashboard() {
+  const [stats, setStats] = useState({
+    totalStudents: 0,
+    todayAttendance: 0,
+    totalAttendance: 0,
+    modelStatus: "Not Trained",
+  });
 
-  const [studentCount, setStudentCount] = useState(0);
-  const [attendanceCount, setAttendanceCount] = useState(0);
-  const [modelStatus, setModelStatus] = useState("");
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-
     async function loadDashboardData() {
+      try {
+        const response = await api.get("/dashboard-stats");
+setStats(response.data);
 
-     try {
-
-    // Student Count
-    const studentResponse = await api.get("/students");
-    setStudentCount(studentResponse.data.count);
-
-    // Attendance Count
-    const attendanceResponse = await api.get("/attendance-count");
-    setAttendanceCount(attendanceResponse.data.count);
-
-    // Model Status
-    const modelResponse = await api.get("/model-status");
-    setModelStatus(modelResponse.data.status);
-
-} catch (error) {
-
-    console.error(error);
-
-}
-
+const weekly = await api.get("/weekly-attendance");
+setChartData(weekly.data);
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     loadDashboardData();
-
   }, []);
 
   return (
+    <div className="space-y-10">
 
-    <div>
+      {/* Header */}
+      <div>
+        <h1 className="text-4xl font-bold text-gray-800">
+          Dashboard
+        </h1>
 
-      <h1 className="text-3xl font-bold">
-        Dashboard
-      </h1>
+        <p className="text-gray-500 mt-2">
+          Monitor students, attendance records and model status.
+        </p>
+      </div>
 
-      <p className="text-gray-500 mt-2 mb-8">
-        Welcome to Smart Face Attendance System
-      </p>
-
-      <div className="grid grid-cols-3 gap-6">
+      {/* Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
         <StatCard
           title="Students"
-          value={studentCount}
+          value={stats.totalStudents}
           subtitle="Registered Students"
           icon={<FaUsers />}
         />
 
         <StatCard
-          title="Attendance"
-          value={attendanceCount}
-          subtitle="Records"
+          title="Today's Attendance"
+          value={stats.todayAttendance}
+          subtitle="Present Today"
           icon={<FaClipboardCheck />}
         />
 
         <StatCard
-  title="Model"
-  value={modelStatus}
-  subtitle="Training Status"
-  icon={<FaBrain />}
-/>
+          title="Total Attendance"
+          value={stats.totalAttendance}
+          subtitle="Attendance Records"
+          icon={<FaClipboardCheck />}
+        />
+
+        <StatCard
+          title="Model Status"
+          value={stats.modelStatus}
+          subtitle="Recognition Status"
+          icon={<FaBrain />}
+        />
 
       </div>
 
-      <div className="mt-10">
+      {/* Recent Attendance */}
+<div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6">
 
-        <h2 className="text-xl font-semibold mb-4">
+  <h2 className="text-2xl font-semibold text-gray-800 mb-5">
+    Recent Attendance
+  </h2>
+
+  {stats.recentAttendance?.length > 0 ? (
+
+    <div className="space-y-4">
+
+      {stats.recentAttendance.map((student, index) => (
+
+        <div
+          key={index}
+          className="flex justify-between items-center border-b pb-3 last:border-none"
+        >
+
+          <div>
+
+            <p className="font-semibold text-gray-800">
+              {student.name}
+            </p>
+
+            <p className="text-sm text-gray-500">
+              {student.date}
+            </p>
+
+          </div>
+
+          <div className="text-right">
+
+            <p className="font-medium">
+              {student.time}
+            </p>
+
+            <span className="text-green-600 text-sm font-semibold">
+              {student.status}
+            </span>
+
+          </div>
+
+        </div>
+
+      ))}
+
+    </div>
+
+  ) : (
+
+    <p className="text-gray-500">
+      No attendance records found.
+    </p>
+
+  )}
+
+</div>
+
+<AttendanceChart data={chartData} />
+
+      {/* Quick Actions */}
+      <div>
+
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
           Quick Actions
         </h2>
 
-        <div className="flex gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-          <Button>
-            Register Student
-          </Button>
+          {/* Register */}
+          <button className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
 
-          <Button variant="success">
-            Train Model
-          </Button>
+            <div className="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-5">
+              <FaUserPlus size={24} />
+            </div>
 
-          <Button variant="warning">
-            Mark Attendance
-          </Button>
+            <h3 className="text-lg font-semibold text-gray-800">
+              Register Student
+            </h3>
+
+            <p className="text-gray-500 text-sm mt-2">
+              Add a new student and capture facial images for training.
+            </p>
+
+          </button>
+
+          {/* Train */}
+          <button className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+
+            <div className="w-14 h-14 rounded-xl bg-green-100 text-green-600 flex items-center justify-center mb-5">
+              <FaBrain size={24} />
+            </div>
+
+            <h3 className="text-lg font-semibold text-gray-800">
+              Train Model
+            </h3>
+
+            <p className="text-gray-500 text-sm mt-2">
+              Train the face recognition model using registered students.
+            </p>
+
+          </button>
+
+          {/* Attendance */}
+          <button className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+
+            <div className="w-14 h-14 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-5">
+              <FaCamera size={24} />
+            </div>
+
+            <h3 className="text-lg font-semibold text-gray-800">
+              Mark Attendance
+            </h3>
+
+            <p className="text-gray-500 text-sm mt-2">
+              Start face recognition and automatically mark attendance.
+            </p>
+
+          </button>
 
         </div>
 
       </div>
 
     </div>
-
   );
-
 }

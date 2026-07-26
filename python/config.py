@@ -1,4 +1,11 @@
 import os
+import os
+
+SECRET_KEY = "your_super_secret_key_change_this"
+
+JWT_ALGORITHM = "HS256"
+
+JWT_EXPIRATION_HOURS = 24
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 

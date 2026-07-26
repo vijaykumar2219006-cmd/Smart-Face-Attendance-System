@@ -1,10 +1,9 @@
-import {
-  FaBell,
-  FaSearch,
-  FaUserCircle
-} from "react-icons/fa";
+import { FaBell, FaUserCircle, FaSignOutAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const navigate = useNavigate();
+
   const hour = new Date().getHours();
 
   const greeting =
@@ -14,13 +13,22 @@ export default function Navbar() {
       ? "Good Afternoon"
       : "Good Evening";
 
+  const username = localStorage.getItem("username") || "Admin";
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+
+    navigate("/login");
+  };
+
   return (
     <header className="h-20 bg-white border-b border-gray-200 px-8 flex items-center justify-between">
 
       {/* Left */}
       <div>
         <h1 className="text-2xl font-bold text-gray-800">
-          {greeting}, Admin 
+          {greeting}, {username}
         </h1>
 
         <p className="text-gray-500 text-sm mt-1">
@@ -29,48 +37,48 @@ export default function Navbar() {
       </div>
 
       {/* Right */}
-      <div className="flex items-center gap-6">
-
-        {/* Search */}
-        <div className="relative">
-
-          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-
-          <input
-            type="text"
-            placeholder="Search..."
-            className="pl-10 pr-4 py-2 w-64 border rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-
-        </div>
+      <div className="flex items-center gap-5">
 
         {/* Notification */}
-        <button className="relative p-2 rounded-xl hover:bg-gray-100 transition">
+        <button className="relative w-11 h-11 rounded-xl bg-gray-100 hover:bg-gray-200 transition flex items-center justify-center">
 
-          <FaBell size={20} />
+          <FaBell className="text-gray-600" />
 
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full"></span>
 
         </button>
+
+        {/* Divider */}
+        <div className="w-px h-10 bg-gray-200"></div>
 
         {/* Profile */}
         <div className="flex items-center gap-3">
 
-          <FaUserCircle size={38} className="text-blue-600" />
+          <FaUserCircle
+            size={40}
+            className="text-blue-600"
+          />
 
           <div>
-
-            <p className="font-semibold">
-              Admin
+            <p className="font-semibold text-gray-800">
+              {username}
             </p>
 
             <p className="text-sm text-gray-500">
               Administrator
             </p>
-
           </div>
 
         </div>
+
+        {/* Logout */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
+        >
+          <FaSignOutAlt />
+          Logout
+        </button>
 
       </div>
 
