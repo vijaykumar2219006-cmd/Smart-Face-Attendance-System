@@ -6,6 +6,7 @@ import {
   FaUserPlus,
   FaCamera,
 } from "react-icons/fa";
+import ProfileImage from "../components/ProfileImage";
 
 import StatCard from "../components/StatCard";
 import api from "../services/api";
@@ -25,10 +26,10 @@ export default function Dashboard() {
     async function loadDashboardData() {
       try {
         const response = await api.get("/dashboard-stats");
-setStats(response.data);
+        setStats(response.data);
 
-const weekly = await api.get("/weekly-attendance");
-setChartData(weekly.data);
+        const weekly = await api.get("/weekly-attendance");
+        setChartData(weekly.data);
       } catch (error) {
         console.error(error);
       }
@@ -39,12 +40,9 @@ setChartData(weekly.data);
 
   return (
     <div className="space-y-10">
-
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-bold text-gray-800">
-          Dashboard
-        </h1>
+        <h1 className="text-4xl font-bold text-gray-800">Dashboard</h1>
 
         <p className="text-gray-500 mt-2">
           Monitor students, attendance records and model status.
@@ -53,7 +51,6 @@ setChartData(weekly.data);
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-
         <StatCard
           title="Students"
           value={stats.totalStudents}
@@ -81,81 +78,60 @@ setChartData(weekly.data);
           subtitle="Recognition Status"
           icon={<FaBrain />}
         />
-
       </div>
 
       {/* Recent Attendance */}
-<div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6">
+      <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-5">
+          Recent Attendance
+        </h2>
 
-  <h2 className="text-2xl font-semibold text-gray-800 mb-5">
-    Recent Attendance
-  </h2>
+        {stats.recentAttendance?.length > 0 ? (
+          <div className="space-y-4">
+            {stats.recentAttendance.map((student, index) => (
+              <div
+                key={index}
+                className="flex justify-between items-center p-4 rounded-xl hover:bg-blue-50 transition border-b last:border-none"
+              >
+                <div className="flex items-center gap-4">
+                  <ProfileImage studentName={student.name} />
 
-  {stats.recentAttendance?.length > 0 ? (
+                  <div>
+                    <p className="font-semibold text-gray-800">
+                      {student.name}
+                    </p>
 
-    <div className="space-y-4">
+                    <p className="text-sm text-gray-500">{student.date}</p>
+                  </div>
+                </div>
 
-      {stats.recentAttendance.map((student, index) => (
+                <div className="text-right">
+                  <p className="font-semibold text-gray-700">{student.time}</p>
 
-        <div
-          key={index}
-          className="flex justify-between items-center border-b pb-3 last:border-none"
-        >
-
-          <div>
-
-            <p className="font-semibold text-gray-800">
-              {student.name}
-            </p>
-
-            <p className="text-sm text-gray-500">
-              {student.date}
-            </p>
-
+                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    {student.status}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
+        ) : (
+          <p className="text-gray-500">No attendance records found.</p>
+        )}
+      </div>
 
-          <div className="text-right">
-
-            <p className="font-medium">
-              {student.time}
-            </p>
-
-            <span className="text-green-600 text-sm font-semibold">
-              {student.status}
-            </span>
-
-          </div>
-
-        </div>
-
-      ))}
-
-    </div>
-
-  ) : (
-
-    <p className="text-gray-500">
-      No attendance records found.
-    </p>
-
-  )}
-
-</div>
-
-<AttendanceChart data={chartData} />
+      <AttendanceChart data={chartData} />
 
       {/* Quick Actions */}
       <div>
-
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">
           Quick Actions
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
           {/* Register */}
           <button className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-
             <div className="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-5">
               <FaUserPlus size={24} />
             </div>
@@ -167,29 +143,23 @@ setChartData(weekly.data);
             <p className="text-gray-500 text-sm mt-2">
               Add a new student and capture facial images for training.
             </p>
-
           </button>
 
           {/* Train */}
           <button className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-
             <div className="w-14 h-14 rounded-xl bg-green-100 text-green-600 flex items-center justify-center mb-5">
               <FaBrain size={24} />
             </div>
 
-            <h3 className="text-lg font-semibold text-gray-800">
-              Train Model
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-800">Train Model</h3>
 
             <p className="text-gray-500 text-sm mt-2">
               Train the face recognition model using registered students.
             </p>
-
           </button>
 
           {/* Attendance */}
           <button className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-
             <div className="w-14 h-14 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-5">
               <FaCamera size={24} />
             </div>
@@ -201,13 +171,9 @@ setChartData(weekly.data);
             <p className="text-gray-500 text-sm mt-2">
               Start face recognition and automatically mark attendance.
             </p>
-
           </button>
-
         </div>
-
       </div>
-
     </div>
   );
 }

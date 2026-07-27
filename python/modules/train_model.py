@@ -10,6 +10,9 @@ from config import (
     LABEL_FILE,
 )
 
+print("DATASET PATH:", DATASET_PATH)
+print("Folders:", os.listdir(DATASET_PATH))
+
 
 def train_model() -> None:
     """
@@ -54,6 +57,13 @@ def train_model() -> None:
         current_label += 1
 
     if len(faces) == 0:
+
+        if os.path.exists(MODEL_FILE):
+            os.remove(MODEL_FILE)
+
+        if os.path.exists(LABEL_FILE):
+            os.remove(LABEL_FILE)
+
         print("No training images found.")
         return
 

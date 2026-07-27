@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaEye, FaTrash } from "react-icons/fa";
+import ProfileImage from "../components/ProfileImage";
 
 import api from "../services/api";
 import StudentModal from "../components/StudentModal";
@@ -120,9 +121,7 @@ export default function Students() {
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">
 
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow">
-                        {student.name.charAt(0).toUpperCase()}
-                      </div>
+                      <ProfileImage studentName={student.name} />
 
                       <div>
                         <h3 className="font-semibold text-gray-800">
