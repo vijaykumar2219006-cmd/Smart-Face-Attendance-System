@@ -8,10 +8,14 @@ import {
   FaFileCsv,
   FaFileExcel,
   FaPrint,
+  FaTrash,
 } from "react-icons/fa";
 import toast from "react-hot-toast";
+import DeleteAttendanceModal from "../components/DeleteAttendanceModal";
 
 export default function History() {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
   const [records, setRecords] = useState([]);
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [search, setSearch] = useState("");
@@ -49,6 +53,24 @@ export default function History() {
       toast.error("Failed to load attendance history.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteAttendance = async () => {
+    if (!selectedRecord) return;
+
+    try {
+      await api.delete(`/attendance/${selectedRecord._id}`);
+
+      toast.success("Attendance record deleted successfully.");
+
+      setShowDeleteModal(false);
+      setSelectedRecord(null);
+
+      fetchHistory();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete attendance record.");
     }
   };
 
@@ -332,6 +354,7 @@ export default function History() {
                 <th className="py-4 px-6 text-left">Date</th>
                 <th className="py-4 px-6 text-left">Time</th>
                 <th className="py-4 px-6 text-left">Status</th>
+                <th className="py-4 px-6 text-center">Action</th>
               </tr>
             </thead>
 
@@ -354,12 +377,34 @@ export default function History() {
                       Present
                     </span>
                   </td>
+
+                  {/* New Action Column */}
+                  <td className="py-4 px-6 text-center">
+                    <button
+                      onClick={() => {
+                        setSelectedRecord(record);
+                        setShowDeleteModal(true);
+                      }}
+                      className="text-red-600 hover:text-red-800 transition"
+                    >
+                      <FaTrash />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+      <DeleteAttendanceModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedRecord(null);
+        }}
+        onDelete={deleteAttendance}
+        record={selectedRecord}
+      />
     </div>
   );
 }

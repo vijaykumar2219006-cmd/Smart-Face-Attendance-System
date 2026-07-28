@@ -67,13 +67,18 @@ def train_model() -> None:
         print("No training images found.")
         return
 
+    # Train the recognizer
     recognizer.train(faces, np.array(labels))
 
+    # Save trained model
     recognizer.save(MODEL_FILE)
 
+    # Save label mapping
     with open(LABEL_FILE, "w") as file:
         json.dump(label_map, file, indent=4)
 
     print("\nModel trained successfully!")
     print(f"Students trained : {len(label_map)}")
     print(f"Images trained   : {len(faces)}")
+    print(f"Model saved      : {MODEL_FILE}")
+    print(f"Labels saved     : {LABEL_FILE}")

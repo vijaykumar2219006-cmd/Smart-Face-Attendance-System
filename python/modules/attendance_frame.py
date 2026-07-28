@@ -20,7 +20,6 @@ from config import (
     CONFIDENCE_THRESHOLD,
 )
 
-# from profiling.tracing import label
 from utils import (
     get_current_date,
     get_current_time,
@@ -28,18 +27,40 @@ from utils import (
     save_attendance,
 )
 
-
 recognizer = cv2.face.LBPHFaceRecognizer_create()
-recognizer.read(MODEL_FILE)
+labels = {}
 
-with open(LABEL_FILE, "r") as file:
-    labels = json.load(file)
+
+def load_model():
+    global recognizer, labels
+
+    recognizer = cv2.face.LBPHFaceRecognizer_create()
+
+    if os.path.exists(MODEL_FILE):
+        recognizer.read(MODEL_FILE)
+
+    if os.path.exists(LABEL_FILE):
+        with open(LABEL_FILE, "r") as file:
+            labels = json.load(file)
+    else:
+        labels = {}
+
+
+# Load once when the server starts
+load_model()
 
 os.makedirs(ATTENDANCE_PATH, exist_ok=True)
 create_csv_if_not_exists(ATTENDANCE_FILE)
 
 
 def process_attendance_frame(image_data):
+
+    # Safety: if model files were deleted, don't call predict()
+    if not os.path.exists(MODEL_FILE) or not labels:
+        return {
+            "success": False,
+            "message": "Face recognition model is not trained."
+        }
 
     image_data = image_data.split(",")[1]
 
@@ -72,12 +93,6 @@ def process_attendance_frame(image_data):
 
     label, confidence = recognizer.predict(face)
 
-    # print("=" * 40)
-    # print("Predicted Label:", label)
-    # print("Confidence:", confidence)
-    # print("Available Labels:", labels)
-    # print("=" * 40)
-
     if confidence >= CONFIDENCE_THRESHOLD:
         return {
             "success": True,
@@ -91,16 +106,24 @@ def process_attendance_frame(image_data):
     today = get_current_date()
     current_time = get_current_time()
 
-    existing = attendance_collection.find_one({
-        "name": name,
-        "date": today
-    })
+    result = attendance_collection.update_one(
+        {
+            "name": name,
+            "date": today
+        },
+        {
+            "$setOnInsert": {
+                "name": name,
+                "date": today,
+                "time": current_time,
+                "status": "Present",
+                "confidence": round(confidence, 2)
+            }
+        },
+        upsert=True
+    )
 
-    if existing:
-
-        status = "ALREADY_MARKED"
-
-    else:
+    if result.upserted_id:
 
         save_attendance(
             ATTENDANCE_FILE,
@@ -109,24 +132,11 @@ def process_attendance_frame(image_data):
             current_time
         )
 
-        attendance_collection.insert_one({
-            "name": name,
-            "date": today,
-            "time": current_time,
-            "status": "Present",
-            "confidence": round(confidence,2)
-        })
-
         status = "MARKED"
 
-    #     print(f"Face: x={x}, y={y}, w={w}, h={h}")
-    #     print(f"Frame: {frame.shape}")
+    else:
 
-    # print("ATTENDANCE:", x, y, w, h)
-
-    # print("MODEL:", MODEL_FILE)
-    # print("LABELS:", LABEL_FILE)
-    # print("Loaded labels:", labels)
+        status = "ALREADY_MARKED"
 
     return {
         "success": True,
@@ -134,7 +144,7 @@ def process_attendance_frame(image_data):
         "recognized": True,
         "status": status,
         "name": name,
-        "confidence": round(confidence,2),
+        "confidence": round(confidence, 2),
         "face": {
             "x": int(x),
             "y": int(y),

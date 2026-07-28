@@ -3,12 +3,15 @@ from database import students_collection, attendance_collection
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
+from modules.attendance_frame import load_model
+
 from modules.register_frame import process_frame
 
 from modules.attendance_frame import process_attendance_frame
 
 from modules.register_session import start_registration
 
+from bson import ObjectId
 import jwt
 
 from auth import token_required
@@ -41,7 +44,7 @@ app.config["JWT_HEADER_TYPE"] = "Bearer"
 
 
 CORS(app)
-jwt = JWTManager(app)
+jwt_manager = JWTManager(app)
 
 
 @app.route("/")
@@ -64,6 +67,8 @@ def get_students():
         "count": len(students),
         "students": [student["name"] for student in students]
     })
+
+
 @app.route("/register", methods=["POST"])
 @token_required
 def register():
@@ -133,6 +138,8 @@ def register_frame():
 def train():
 
     train_model()
+
+    load_model()   # <-- reload latest trainer.yml and labels.json
 
     return jsonify({
         "status": "success",
@@ -265,6 +272,7 @@ def attendance_history():
     for record in attendance:
 
         records.append({
+            "_id": str(record["_id"]),
             "name": record["name"],
             "date": record["date"],
             "time": record["time"]
@@ -272,13 +280,39 @@ def attendance_history():
 
     return jsonify(records)
 
-from datetime import datetime
+from bson import ObjectId
+
+@app.route("/attendance/<attendance_id>", methods=["DELETE"])
+@token_required
+def delete_attendance(attendance_id):
+    try:
+        result = attendance_collection.delete_one(
+            {"_id": ObjectId(attendance_id)}
+        )
+
+        if result.deleted_count == 0:
+            return jsonify({
+                "success": False,
+                "message": "Attendance record not found."
+            }), 404
+
+        return jsonify({
+            "success": True,
+            "message": "Attendance record deleted successfully."
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
 
 @app.route("/dashboard-stats", methods=["GET"])
 @token_required
 def dashboard_stats():
 
     total_students = students_collection.count_documents({})
+
     total_attendance = attendance_collection.count_documents({})
 
     today = datetime.now().strftime("%Y-%m-%d")
@@ -286,6 +320,17 @@ def dashboard_stats():
     today_attendance = attendance_collection.count_documents({
         "date": today
     })
+
+    # New Statistics
+    absent_today = max(total_students - today_attendance, 0)
+
+    attendance_percentage = 0
+
+    if total_students > 0:
+        attendance_percentage = round(
+            (today_attendance / total_students) * 100,
+            2
+        )
 
     model_ready = os.path.exists(MODEL_FILE)
 
@@ -305,7 +350,13 @@ def dashboard_stats():
         "totalStudents": total_students,
         "todayAttendance": today_attendance,
         "totalAttendance": total_attendance,
+
+        # New values
+        "absentToday": absent_today,
+        "attendancePercentage": attendance_percentage,
+
         "modelStatus": "Ready" if model_ready else "Not Trained",
+
         "recentAttendance": recent
     })
 

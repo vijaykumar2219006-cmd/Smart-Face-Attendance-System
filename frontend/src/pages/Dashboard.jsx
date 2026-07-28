@@ -5,6 +5,8 @@ import {
   FaBrain,
   FaUserPlus,
   FaCamera,
+  FaUserTimes,
+  FaChartLine,
 } from "react-icons/fa";
 import ProfileImage from "../components/ProfileImage";
 
@@ -52,31 +54,35 @@ export default function Dashboard() {
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <StatCard
-          title="Students"
+          title="Total Students"
           value={stats.totalStudents}
           subtitle="Registered Students"
           icon={<FaUsers />}
+          color="blue"
         />
 
         <StatCard
-          title="Today's Attendance"
+          title="Present Today"
           value={stats.todayAttendance}
-          subtitle="Present Today"
+          subtitle="Students Present"
           icon={<FaClipboardCheck />}
+          color="green"
         />
 
         <StatCard
-          title="Total Attendance"
-          value={stats.totalAttendance}
-          subtitle="Attendance Records"
-          icon={<FaClipboardCheck />}
+          title="Absent Today"
+          value={stats.absentToday}
+          subtitle="Students Absent"
+          icon={<FaUserTimes />}
+          color="red"
         />
 
         <StatCard
-          title="Model Status"
-          value={stats.modelStatus}
-          subtitle="Recognition Status"
-          icon={<FaBrain />}
+          title="Attendance Rate"
+          value={`${stats.attendancePercentage}%`}
+          subtitle="Today's Attendance"
+          icon={<FaChartLine />}
+          color="purple"
         />
       </div>
 

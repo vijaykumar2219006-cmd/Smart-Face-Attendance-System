@@ -5,12 +5,14 @@ import ProfileImage from "../components/ProfileImage";
 import api from "../services/api";
 import StudentModal from "../components/StudentModal";
 import DeleteStudentModal from "../components/DeleteStudentModal";
+import { useNavigate } from "react-router-dom";
 
 export default function Students() {
   const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentToDelete, setStudentToDelete] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadStudents() {
@@ -26,23 +28,21 @@ export default function Students() {
   }, []);
 
   const filteredStudents = students.filter((student) =>
-    student.name.toLowerCase().includes(search.toLowerCase())
+    student.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   const handleDelete = async (student) => {
     try {
       await api.delete(`/students/${student.name}`);
 
-      setStudents((prev) =>
-        prev.filter((s) => s.name !== student.name)
-      );
+      setStudents((prev) => prev.filter((s) => s.name !== student.name));
 
       setStudentToDelete(null);
 
-      alert("Student deleted successfully.");
+      toast.success("Student deleted successfully.");
     } catch (error) {
       console.error(error);
-      alert("Failed to delete student.");
+      toast.error("Failed to delete student.");
     }
   };
 
@@ -51,16 +51,15 @@ export default function Students() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-4xl font-bold text-gray-800">
-            Students
-          </h1>
+          <h1 className="text-4xl font-bold text-gray-800">Students</h1>
 
-          <p className="text-gray-500 mt-2">
-            Manage all registered students.
-          </p>
+          <p className="text-gray-500 mt-2">Manage all registered students.</p>
         </div>
 
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium shadow-md transition">
+        <button
+          onClick={() => navigate("/register")}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium shadow-md transition"
+        >
           + Register Student
         </button>
       </div>
@@ -68,7 +67,6 @@ export default function Students() {
       {/* Search */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 mb-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
           <div className="relative w-full md:w-96">
             <input
               type="text"
@@ -93,15 +91,12 @@ export default function Students() {
           <div className="bg-blue-50 text-blue-700 px-5 py-3 rounded-xl font-semibold">
             {filteredStudents.length} Students
           </div>
-
         </div>
       </div>
 
       {/* Students Table */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-
         <table className="w-full">
-
           <thead className="bg-slate-50 text-gray-600 uppercase text-sm border-b border-gray-200">
             <tr>
               <th className="px-6 py-4 text-left">Student</th>
@@ -120,7 +115,6 @@ export default function Students() {
                 >
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">
-
                       <ProfileImage studentName={student.name} />
 
                       <div>
@@ -132,7 +126,6 @@ export default function Students() {
                           Registered Student
                         </p>
                       </div>
-
                     </div>
                   </td>
 
@@ -151,7 +144,6 @@ export default function Students() {
 
                   <td className="px-6 py-5">
                     <div className="flex justify-end gap-3">
-
                       <button
                         onClick={() => setSelectedStudent(student)}
                         className="w-10 h-10 rounded-xl bg-blue-100 hover:bg-blue-600 text-blue-600 hover:text-white transition flex items-center justify-center"
@@ -165,25 +157,19 @@ export default function Students() {
                       >
                         <FaTrash />
                       </button>
-
                     </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td
-                  colSpan="4"
-                  className="py-12 text-center text-gray-500"
-                >
+                <td colSpan="4" className="py-12 text-center text-gray-500">
                   No students found.
                 </td>
               </tr>
             )}
           </tbody>
-
         </table>
-
       </div>
 
       {/* Student Details Modal */}

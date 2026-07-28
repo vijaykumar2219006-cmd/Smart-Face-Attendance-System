@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   FaCamera,
   FaCheckCircle,
@@ -21,6 +21,7 @@ export default function Attendance() {
   const [studentName, setStudentName] = useState("");
 
   const [status, setStatus] = useState("");
+  const processingRef = useRef(false);
 
   const fetchAttendanceCount = async () => {
     try {
@@ -44,7 +45,11 @@ export default function Attendance() {
   };
 
   const captureFrame = async (image) => {
-    try {
+  if (processingRef.current) return;
+
+  processingRef.current = true;
+
+  try {
       const res = await api.post("/attendance-frame", {
         image,
       });
@@ -84,12 +89,14 @@ export default function Attendance() {
 
         toast.success(data.name + " recognized");
       }
-    } catch (err) {
-      console.error(err);
-      setCapturing(false);
-      toast.error("Recognition failed");
-    }
-  };
+      } catch (err) {
+    console.error(err);
+    setCapturing(false);
+    toast.error("Recognition failed");
+  } finally {
+    processingRef.current = false;
+  }
+};
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
