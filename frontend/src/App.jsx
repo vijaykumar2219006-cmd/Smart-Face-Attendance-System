@@ -7,6 +7,7 @@ import Attendance from "./pages/Attendance";
 import Students from "./pages/Students";
 import History from "./pages/History";
 import Login from "./pages/Login";
+import StudentProfile from "./pages/StudentProfile";
 
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -33,6 +34,7 @@ function App() {
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/students" element={<Students />} />
           <Route path="/history" element={<History />} />
+          <Route path="/student/:id" element={<StudentProfile />} />
         </Route>
 
       </Routes>

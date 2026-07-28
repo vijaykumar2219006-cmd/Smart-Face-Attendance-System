@@ -10,6 +10,8 @@ import {
 } from "react-icons/fa";
 import ProfileImage from "../components/ProfileImage";
 
+import { useNavigate } from "react-router-dom";
+
 import StatCard from "../components/StatCard";
 import api from "../services/api";
 import AttendanceChart from "../components/AttendanceChart";
@@ -23,6 +25,7 @@ export default function Dashboard() {
   });
 
   const [chartData, setChartData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadDashboardData() {
@@ -137,7 +140,10 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Register */}
-          <button className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <button
+            onClick={() => navigate("/register")}
+            className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+          >
             <div className="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-5">
               <FaUserPlus size={24} />
             </div>
@@ -152,7 +158,10 @@ export default function Dashboard() {
           </button>
 
           {/* Train */}
-          <button className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <button
+            onClick={() => navigate("/train")}
+            className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+          >
             <div className="w-14 h-14 rounded-xl bg-green-100 text-green-600 flex items-center justify-center mb-5">
               <FaBrain size={24} />
             </div>
@@ -165,7 +174,10 @@ export default function Dashboard() {
           </button>
 
           {/* Attendance */}
-          <button className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <button
+            onClick={() => navigate("/attendance")}
+            className="bg-white rounded-2xl border border-gray-200 p-6 text-left hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+          >
             <div className="w-14 h-14 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-5">
               <FaCamera size={24} />
             </div>

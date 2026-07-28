@@ -11,6 +11,9 @@ def token_required(f):
 
         auth_header = request.headers.get("Authorization")
 
+        auth_header = request.headers.get("Authorization")
+        print(auth_header)
+
         if not auth_header:
             return jsonify({
                 "success": False,

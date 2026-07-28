@@ -161,23 +161,11 @@ def attendance():
 @token_required
 def attendance_count():
 
-    import csv
-    import os
+    today = datetime.now().strftime("%Y-%m-%d")
 
-    attendance_file = ATTENDANCE_FILE
-
-    count = 0
-
-    if os.path.exists(attendance_file):
-
-        with open(attendance_file, "r") as file:
-
-            reader = csv.reader(file)
-
-            next(reader, None)
-
-            for row in reader:
-                count += 1
+    count = attendance_collection.count_documents({
+        "date": today
+    })
 
     return jsonify({
         "count": count
@@ -224,9 +212,10 @@ def students_list():
             ])
 
         students.append({
-            "name": student_name,
-            "images": image_count
-        })
+    "_id": str(student["_id"]),
+    "name": student_name,
+    "images": image_count
+})
 
     return jsonify(students)
 
@@ -258,6 +247,110 @@ def delete_student(student_name):
     except Exception as e:
         return jsonify({
             "status": "error",
+            "message": str(e)
+        }), 500
+
+@app.route("/student/<student_id>", methods=["GET"])
+@token_required
+def get_student(student_id):
+
+    print("Student ID received:", student_id)
+
+    student = students_collection.find_one({
+        "_id": ObjectId(student_id)
+    })
+
+    print("Student:", student)
+    try:
+        student = students_collection.find_one({
+            "_id": ObjectId(student_id)
+        })
+
+        if not student:
+            return jsonify({"message": "Student not found"}), 404
+
+        attendance = list(
+            attendance_collection.find(
+                {"name": student["name"]},
+                {"_id": 0}
+            ).sort("date", -1)
+        )
+
+        return jsonify({
+            "student": {
+                "_id": str(student["_id"]),
+                "name": student["name"],
+                "registeredAt": student.get("registeredAt")
+            },
+            "totalAttendance": len(attendance),
+            "attendanceHistory": attendance
+        })
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+@app.route("/student/<student_id>", methods=["PUT"])
+@token_required
+def update_student(student_id):
+
+    try:
+        data = request.get_json()
+
+        new_name = data.get("name", "").strip()
+
+        if not new_name:
+            return jsonify({
+                "success": False,
+                "message": "Student name is required."
+            }), 400
+
+        student = students_collection.find_one({
+            "_id": ObjectId(student_id)
+        })
+
+        if not student:
+            return jsonify({
+                "success": False,
+                "message": "Student not found."
+            }), 404
+
+        old_name = student["name"]
+
+        # Update MongoDB
+        students_collection.update_one(
+            {"_id": ObjectId(student_id)},
+            {
+                "$set": {
+                    "name": new_name
+                }
+            }
+        )
+
+        # Update attendance records
+        attendance_collection.update_many(
+            {"name": old_name},
+            {
+                "$set": {
+                    "name": new_name
+                }
+            }
+        )
+
+        # Rename dataset folder
+        old_folder = os.path.join(DATASET_PATH, old_name)
+        new_folder = os.path.join(DATASET_PATH, new_name)
+
+        if os.path.exists(old_folder):
+            os.rename(old_folder, new_folder)
+
+        return jsonify({
+            "success": True,
+            "message": "Student updated successfully."
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
             "message": str(e)
         }), 500
 
@@ -345,6 +438,10 @@ def dashboard_stats():
             "time": record["time"],
             "status": record.get("status", "Present")
         })
+
+    print("Total Students:", total_students)
+    print("Total Attendance:", total_attendance)
+    print("Today's Attendance:", today_attendance)
 
     return jsonify({
         "totalStudents": total_students,

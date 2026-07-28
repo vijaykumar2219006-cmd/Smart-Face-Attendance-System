@@ -145,7 +145,7 @@ export default function Students() {
                   <td className="px-6 py-5">
                     <div className="flex justify-end gap-3">
                       <button
-                        onClick={() => setSelectedStudent(student)}
+                        onClick={() => navigate(`/student/${student._id}`)}
                         className="w-10 h-10 rounded-xl bg-blue-100 hover:bg-blue-600 text-blue-600 hover:text-white transition flex items-center justify-center"
                       >
                         <FaEye />
