@@ -436,6 +436,7 @@ def dashboard_stats():
             "name": record["name"],
             "date": record["date"],
             "time": record["time"],
+            "confidence": record.get("confidence", 0),
             "status": record.get("status", "Present")
         })
 
