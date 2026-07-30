@@ -1,29 +1,30 @@
 import { useEffect, useState } from "react";
-import { FaEye, FaTrash } from "react-icons/fa";
+import { FaEye, FaTrash, FaEdit } from "react-icons/fa";
 import ProfileImage from "../components/ProfileImage";
-
+import EditStudentModal from "../components/EditStudentModal";
 import api from "../services/api";
 import StudentModal from "../components/StudentModal";
 import DeleteStudentModal from "../components/DeleteStudentModal";
 import { useNavigate } from "react-router-dom";
 
 export default function Students() {
+  const [editingStudent, setEditingStudent] = useState(null);
   const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentToDelete, setStudentToDelete] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function loadStudents() {
-      try {
-        const response = await api.get("/students-list");
-        setStudents(response.data);
-      } catch (error) {
-        console.error(error);
-      }
+  const loadStudents = async () => {
+    try {
+      const response = await api.get("/students-list");
+      setStudents(response.data);
+    } catch (error) {
+      console.error(error);
     }
+  };
 
+  useEffect(() => {
     loadStudents();
   }, []);
 
@@ -157,6 +158,13 @@ export default function Students() {
                       >
                         <FaTrash />
                       </button>
+
+                      <button
+  onClick={() => setEditingStudent(student)}
+  className="w-10 h-10 rounded-xl bg-yellow-100 hover:bg-yellow-500 text-yellow-600 hover:text-white transition flex items-center justify-center"
+>
+  <FaEdit />
+</button>
                     </div>
                   </td>
                 </tr>
@@ -184,6 +192,14 @@ export default function Students() {
         onClose={() => setStudentToDelete(null)}
         onDelete={handleDelete}
       />
+
+      {editingStudent && (
+        <EditStudentModal
+          student={editingStudent}
+          onClose={() => setEditingStudent(null)}
+          onSuccess={loadStudents}
+        />
+      )}
     </div>
   );
 }

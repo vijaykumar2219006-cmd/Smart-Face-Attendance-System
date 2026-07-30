@@ -26,38 +26,84 @@ export default function Dashboard() {
 
   const [chartData, setChartData] = useState([]);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadDashboardData() {
-      try {
-        const response = await api.get("/dashboard-stats");
-        setStats(response.data);
+  async function loadDashboardData() {
+    try {
+      const [dashboard, weekly] = await Promise.all([
+  api.get("/dashboard-stats"),
+  api.get("/weekly-attendance"),
+]);
 
-        const weekly = await api.get("/weekly-attendance");
-        setChartData(weekly.data);
-      } catch (error) {
-        console.error(error);
-      }
+setStats(dashboard.data);
+setChartData(weekly.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
+  }
 
-    loadDashboardData();
-  }, []);
+  loadDashboardData();
+}, []);
+
+  if (loading) {
+  return (
+    <div className="flex justify-center items-center h-[70vh]">
+      <div className="w-14 h-14 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+}
 
   return (
     <div className="space-y-10">
       {/* Header */}
-      <div>
-        <h1 className="text-4xl font-bold text-gray-800">Dashboard</h1>
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
 
-        <p className="text-gray-500 mt-2">
-          Monitor students, attendance records and model status.
-        </p>
-      </div>
+  <div>
+    <h1 className="text-4xl font-bold text-gray-800">
+      Good {new Date().getHours() < 12
+        ? "Morning"
+        : new Date().getHours() < 18
+        ? "Afternoon"
+        : "Evening"} 👋
+    </h1>
+
+    <p className="text-gray-500 mt-2">
+      Welcome back! Here's today's attendance overview.
+    </p>
+  </div>
+
+  <div className="bg-white border rounded-2xl px-6 py-4 shadow-sm">
+  <p className="text-sm text-gray-500">
+    {new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+    })}
+  </p>
+
+  <h3 className="font-semibold text-lg">
+    {new Date().toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    })}
+  </h3>
+
+  <p className="text-sm text-blue-600 mt-1">
+    {new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}
+  </p>
+</div>
+
+</div>
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <StatCard
-          title="Total Students"
+          title="Total Students"  
           value={stats.totalStudents}
           subtitle="Registered Students"
           icon={<FaUsers />}
@@ -87,6 +133,14 @@ export default function Dashboard() {
           icon={<FaChartLine />}
           color="purple"
         />
+
+        <StatCard
+  title="Model Status"
+  value={stats.modelStatus}
+  subtitle="Face Recognition"
+  icon={<FaBrain />}
+  color="indigo"
+/>
       </div>
 
       {/* Recent Attendance */}
@@ -115,13 +169,21 @@ export default function Dashboard() {
                 </div>
 
                 <div className="text-right">
-                  <p className="font-semibold text-gray-700">{student.time}</p>
 
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    {student.status}
-                  </span>
-                </div>
+  <p className="font-semibold text-gray-700">
+    {student.time}
+  </p>
+
+  <p className="text-xs text-gray-500">
+    Confidence: {student.confidence}%
+  </p>
+
+  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold mt-2">
+    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+    {student.status}
+  </span>
+
+</div>
               </div>
             ))}
           </div>
