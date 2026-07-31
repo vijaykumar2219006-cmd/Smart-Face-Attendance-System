@@ -7,6 +7,11 @@ import {
   FaCamera,
   FaUserTimes,
   FaChartLine,
+  FaCalendarAlt,
+  FaClock,
+  FaBullseye,
+  FaArrowRight,
+  // FaCalendarAlt,
 } from "react-icons/fa";
 import ProfileImage from "../components/ProfileImage";
 
@@ -76,27 +81,37 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <div className="bg-white border rounded-2xl px-6 py-4 shadow-sm">
-          <p className="text-sm text-gray-500">
-            {new Date().toLocaleDateString("en-US", {
-              weekday: "long",
-            })}
-          </p>
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl text-white px-6 py-5 shadow-xl min-w-[260px]">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-sm text-indigo-100">Today</p>
 
-          <h3 className="font-semibold text-lg">
-            {new Date().toLocaleDateString("en-IN", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </h3>
+              <h3 className="text-2xl font-bold mt-1">
+                {new Date().toLocaleDateString("en-US", {
+                  weekday: "long",
+                })}
+              </h3>
 
-          <p className="text-sm text-blue-600 mt-1">
-            {new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
+              <p className="mt-2 text-indigo-100">
+                {new Date().toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+
+              <p className="mt-3 text-xl font-semibold">
+                {new Date().toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+            </div>
+
+            <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center text-2xl">
+              <FaCalendarAlt />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -136,158 +151,251 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Model Status */}
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-5 hover:shadow-xl transition-all duration-300">
+          <div className="flex items-start gap-5">
+            <div className="w-16 h-16 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-3xl">
+              <FaBrain />
+            </div>
 
-  {/* Model Status */}
-  <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6">
+            <div className="flex-1">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                Model Status
+              </p>
 
-    <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 mt-2">
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
 
-      <div className="w-16 h-16 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-3xl">
-        <FaBrain />
-      </div>
+                <h2 className="text-4xl font-bold mt-2 text-slate-800">
+                  {stats.modelStatus}
+                </h2>
+              </div>
 
-      <div>
+              <div className="grid grid-cols-2 gap-5 mt-6">
+                <div>
+                  <p className="text-xs uppercase text-slate-400">Algorithm</p>
 
-        <p className="text-sm uppercase text-gray-500">
-          Model Status
-        </p>
-
-        <h2 className="text-4xl font-bold text-gray-800 mt-2">
-          {stats.modelStatus}
-        </h2>
-
-        <p className="text-gray-500 mt-2">
-          Face Recognition Model
-        </p>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  {/* Recent Attendance */}
-  <div className="xl:col-span-2">
-
-    {/* PASTE YOUR RECENT ATTENDANCE CODE HERE */}
-    {/* Recent Attendance */}
-      <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-5">
-          Recent Attendance
-        </h2>
-
-        {stats.recentAttendance?.length > 0 ? (
-          <div className="space-y-4">
-            {stats.recentAttendance.map((student, index) => (
-              <div
-                key={index}
-                className="flex justify-between items-center p-4 rounded-xl hover:bg-blue-50 transition border-b last:border-none"
-              >
-                <div className="flex items-center gap-4">
-                  <ProfileImage studentName={student.name} />
-
-                  <div>
-                    <p className="font-semibold text-gray-800">
-                      {student.name}
-                    </p>
-
-                    <p className="text-sm text-gray-500">{student.date}</p>
-                  </div>
+                  <p className="font-semibold text-slate-700 mt-1">
+                    LBPH Recognizer
+                  </p>
                 </div>
 
-                <div className="text-right">
-                  <p className="font-semibold text-gray-700">{student.time}</p>
+                <div>
+                  <p className="text-xs uppercase text-slate-400">Status</p>
 
-                  <p className="text-xs text-gray-500">
-  Confidence: {student.confidence ?? "N/A"}%
-</p>
-
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold mt-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    {student.status}
+                  <span className="inline-flex mt-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold">
+                    Active
                   </span>
                 </div>
+
+                <div>
+                  <p className="text-xs uppercase text-slate-400">Students</p>
+
+                  <p className="font-semibold text-slate-700 mt-1">
+                    {stats.totalStudents}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-xs uppercase text-slate-400">
+                    Last Updated
+                  </p>
+
+                  <p className="font-semibold text-slate-700 mt-1">
+                    {new Date().toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
-        ) : (
-          <p className="text-gray-500">No attendance records found.</p>
-        )}
+        </div>
+
+        {/* Recent Attendance */}
+        {/* Recent Attendance */}
+        <div className="xl:col-span-2">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-6">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-800">
+                  Recent Attendance
+                </h2>
+
+                <p className="text-sm text-slate-600 mt-1">
+                  Latest attendance records
+                </p>
+              </div>
+
+              <button
+                onClick={() => navigate("/history")}
+                className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+              >
+                View All
+                <FaArrowRight />
+              </button>
+            </div>
+
+            {stats.recentAttendance?.length > 0 ? (
+              <div className="space-y-4">
+                {stats.recentAttendance.map((student, index) => (
+                  <div
+                    key={index}
+                    className="border border-slate-200 rounded-2xl p-5 hover:shadow-lg hover:border-blue-200 transition-all duration-300"
+                  >
+                    <div className="flex justify-between items-start">
+                      {/* Left */}
+                      <div className="flex gap-4">
+                        <ProfileImage studentName={student.name} />
+
+                        <div>
+                          <h3 className="font-bold text-lg text-slate-800">
+                            {student.name}
+                          </h3>
+
+                          <div className="flex flex-wrap gap-4 mt-3 text-sm text-slate-500">
+                            <span className="flex items-center gap-2">
+                              <FaCalendarAlt className="text-blue-500" />
+                              {new Date(student.date).toLocaleDateString(
+                                "en-IN",
+                                {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )}
+                            </span>
+
+                            <span className="flex items-center gap-2">
+                              <FaClock className="text-green-500" />
+                              {student.time}
+                            </span>
+
+                            <span className="flex items-center gap-2">
+                              <FaBullseye className="text-orange-500" />
+                              {student.confidence ?? "N/A"}%
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right */}
+                      <span
+                        className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                          student.status === "Present"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {student.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16 text-slate-500">
+                No attendance records found.
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-  </div>
-
-</div>
-
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-  {/* Chart */}
+        {/* Chart */}
         <div className="xl:col-span-2">
           <AttendanceChart data={chartData} />
         </div>
 
-       {/* Quick Actions */}
+        {/* Quick Actions */}
         <div>
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-          Quick Actions
-        </h2>
+          <h2 className="text-2xl font-bold text-slate-800 mb-6">
+            Quick Actions
+          </h2>
 
-        <div className="flex flex-col gap-5">
-          {/* Register */}
-          <button
-            onClick={() => navigate("/register")}
-            className="bg-white rounded-3xl border border-slate-200 p-6 text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-          >
-            <div className="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-5">
-              <FaUserPlus size={24} />
-            </div>
+          <div className="flex flex-col gap-5">
+            {/* Register */}
+            <button
+              onClick={() => navigate("/register")}
+              className="group bg-white rounded-3xl border border-slate-200 p-5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                    <FaUserPlus />
+                  </div>
 
-            <h3 className="text-lg font-semibold text-gray-800">
-              Register Student
-            </h3>
+                  <div className="text-left">
+                    <h3 className="font-bold text-slate-800">
+                      Register Student
+                    </h3>
 
-            <p className="text-gray-500 text-sm mt-2">
-              Add a new student and capture facial images for training.
-            </p>
-          </button>
+                    <p className="text-sm text-slate-600 mt-1">
+                      Add a new student to the system
+                    </p>
+                  </div>
+                </div>
 
-          {/* Train */}
-          <button
-            onClick={() => navigate("/train")}
-            className="bg-white rounded-3xl border border-slate-200 p-6 text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-          >
-            <div className="w-14 h-14 rounded-xl bg-green-100 text-green-600 flex items-center justify-center mb-5">
-              <FaBrain size={24} />
-            </div>
+                <FaArrowRight className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all duration-300" />
+              </div>
+            </button>
 
-            <h3 className="text-lg font-semibold text-gray-800">Train Model</h3>
+            {/* Train */}
+            <button
+              onClick={() => navigate("/train")}
+              className="group bg-white rounded-3xl border border-slate-200 p-5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-2xl group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
+                    <FaBrain />
+                  </div>
 
-            <p className="text-gray-500 text-sm mt-2">
-              Train the face recognition model using registered students.
-            </p>
-          </button>
+                  <div className="text-left">
+                    <h3 className="font-bold text-slate-800">Train Model</h3>
 
-          {/* Attendance */}
-          <button
-            onClick={() => navigate("/attendance")}
-            className="bg-white rounded-3xl border border-slate-200 p-6 text-left hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-          >
-            <div className="w-14 h-14 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-5">
-              <FaCamera size={24} />
-            </div>
+                    <p className="text-sm text-slate-600 mt-1">
+                      Update the face recognition model
+                    </p>
+                  </div>
+                </div>
 
-            <h3 className="text-lg font-semibold text-gray-800">
-              Mark Attendance
-            </h3>
+                <FaArrowRight className="text-slate-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all duration-300" />
+              </div>
+            </button>
 
-            <p className="text-gray-500 text-sm mt-2">
-              Start face recognition and automatically mark attendance.
-            </p>
-          </button>
+            {/* Attendance */}
+            <button
+              onClick={() => navigate("/attendance")}
+              className="group bg-white rounded-3xl border border-slate-200 p-5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
+                    <FaCamera />
+                  </div>
+
+                  <div className="text-left">
+                    <h3 className="font-bold text-slate-800">
+                      Mark Attendance
+                    </h3>
+
+                    <p className="text-sm text-slate-600 mt-1">
+                      Start live face recognition
+                    </p>
+                  </div>
+                </div>
+
+                <FaArrowRight className="text-slate-400 group-hover:text-orange-600 group-hover:translate-x-1 transition-all duration-300" />
+              </div>
+            </button>
+          </div>
         </div>
-            </div>
+      </div>
     </div>
-
-  </div>
-);
+  );
 }

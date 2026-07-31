@@ -51,20 +51,20 @@ export default function StatCard({
   const theme = colors[color] || colors.blue;
 
   return (
-    <div className="group bg-white rounded-2xl border border-gray-200 hover:border-blue-300 p-6 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+    <div className="group bg-white rounded-3xl border border-gray-200 hover:border-blue-300 p-7 shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
             {title}
           </p>
 
-          <h2 className="text-5xl font-bold text-gray-800 mt-3">{value}</h2>
+          <h2 className="text-6xl font-bold tracking-tight text-gray-800 mt-4">{value}</h2>
 
-          <p className="text-sm text-gray-500 mt-2">{subtitle}</p>
+          <p className="text-sm text-slate-500 mt-2">{subtitle}</p>
         </div>
 
         <div
-          className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6
+          className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl transition-all duration-300 group-hover:scale-110 group-hover:scale-110
             ${theme.bg}
             ${theme.text}
             ${theme.hover}
@@ -74,9 +74,9 @@ export default function StatCard({
         </div>
       </div>
 
-      <div className="mt-6 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+      <div className="mt-6 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
         <div
-          className={`group bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ${theme.border}`}
+          className={`h-full w-2/3 rounded-full transition-all duration-500 group-hover:w-full ${theme.bar}`}
         ></div>
       </div>
     </div>
