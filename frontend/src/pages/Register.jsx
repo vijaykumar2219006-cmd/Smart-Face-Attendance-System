@@ -17,6 +17,8 @@ export default function RegisterStudent() {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
+  
+
   const handleRegister = async () => {
     if (!name.trim()) {
       toast.error("Please enter a student name.");
@@ -40,18 +42,18 @@ export default function RegisterStudent() {
       toast.success("Camera started. Look at the camera.");
       setCapturing(true);
     } catch (err) {
-  console.error(err);
-  console.log(err.response);
+      console.error(err);
+      console.log(err.response);
 
-  toast.dismiss(loadingToast);
+      toast.dismiss(loadingToast);
 
-  const errorMessage =
-    err.response?.data?.message ||
-    err.response?.data?.error ||
-    "Registration failed.";
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Registration failed.";
 
-  toast.error(errorMessage);
-} finally {
+      toast.error(errorMessage);
+    } finally {
       setLoading(false);
     }
   };
@@ -68,17 +70,17 @@ export default function RegisterStudent() {
       setImageCount(data.count);
 
       if (data.status === "FACE_DETECTED") {
-        setStatus("🟢 Face Detected");
+        setStatus(" Face Detected");
         setStatusColor("text-green-600");
       }
 
       if (data.status === "NO_FACE") {
-        setStatus("🔴 No Face Detected");
+        setStatus(" No Face Detected");
         setStatusColor("text-red-600");
       }
 
       if (data.status === "MULTIPLE_FACES") {
-        setStatus("🟡 Multiple Faces Detected");
+        setStatus(" Multiple Faces Detected");
         setStatusColor("text-yellow-600");
       }
 
@@ -99,79 +101,149 @@ export default function RegisterStudent() {
   };
 
   return (
-    <div className="max-w-xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-        <h1 className="text-3xl font-bold text-gray-800">Register Student</h1>
+    <div className="max-w-7xl mx-auto">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-8">
+        {/* Header */}
+        <div className="mb-10">
+          <h1 className="text-4xl font-bold text-slate-800">
+            Register Student
+          </h1>
 
-        <p className="text-gray-500 mt-2">
-          Register a new student by capturing face images.
-        </p>
-
-        <div className="mt-8">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Student Name
-          </label>
-
-          <input
-            type="text"
-            placeholder="Enter student name"
-            value={name}
-            disabled={capturing}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-gray-100"
-          />
+          <p className="text-slate-500 mt-2 text-lg">
+            Register a new student by capturing facial images for attendance.
+          </p>
         </div>
 
-        <div className="mt-8 p-5 rounded-xl bg-blue-50 border border-blue-100">
-          <Camera
-  capturing={capturing}
-  onCapture={captureFrame}
-  face={face}
-/>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
+          {/* LEFT SIDE */}
+          <div className="lg:col-span-2">
+            {/* Student Name */}
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Student Name
+              </label>
 
-          <div className="mt-4">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>Images Captured</span>
-              <span>{imageCount}/100</span>
+              <input
+                type="text"
+                placeholder="Enter student name"
+                value={name}
+                disabled={capturing}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-5 py-4 text-lg focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed"
+              />
             </div>
 
-            <div className="w-full bg-gray-200 rounded-full h-3">
+            {/* Progress */}
+            <div className="mt-8">
+              <div className="flex justify-between items-center mb-3">
+                <span className="font-semibold text-slate-700">
+                  Capture Progress
+                </span>
+
+                <span className="font-bold text-blue-600">
+                  {imageCount} / 100 Images
+                </span>
+              </div>
+
+              <div className="w-full h-4 rounded-full bg-slate-200 overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-500"
+                  style={{
+                    width: `${imageCount}%`,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Detection Status */}
+            <div className="mt-8">
+              <h3 className="font-semibold text-slate-700 mb-3">
+                Detection Status
+              </h3>
+
               <div
-                className="bg-green-600 h-3 rounded-full transition-all duration-300"
-                style={{
-                  width: `${(imageCount / 100) * 100}%`,
-                }}
-              ></div>
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-semibold
+    ${
+      status.includes("No Face")
+        ? "bg-red-100 text-red-700"
+        : status.includes("Multiple")
+          ? "bg-orange-100 text-orange-700"
+          : status.includes("Face Detected")
+            ? "bg-green-100 text-green-700"
+            : "bg-yellow-100 text-yellow-700"
+    }`}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full
+      ${
+        status.includes("No Face")
+          ? "bg-red-500"
+          : status.includes("Multiple")
+            ? "bg-orange-500"
+            : status.includes("Face Detected")
+              ? "bg-green-500"
+              : "bg-yellow-500"
+      }`}
+                ></span>
+
+                {status || "Waiting for camera..."}
+              </div>
+            </div>
+
+            {/* Instructions */}
+            <div className="mt-8 rounded-2xl bg-blue-50 border border-blue-100 p-5">
+              <h3 className="text-lg font-bold text-blue-700 mb-4">
+                📋 Capture Instructions
+              </h3>
+
+              <ul className="space-y-3 text-slate-700">
+                <li>✅ Keep only one face in front of the camera.</li>
+
+                <li>✅ Slowly move your head left and right.</li>
+
+                <li>✅ Look directly into the camera.</li>
+
+                <li>✅ Maintain good lighting.</li>
+
+                <li>✅ Wait until all 100 images are captured.</li>
+              </ul>
+            </div>
+
+            {/* Button */}
+
+            <button
+              onClick={handleRegister}
+              disabled={loading || capturing}
+              className="mt-8 w-full rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
+            >
+              {loading
+                ? "Starting Camera..."
+                : capturing
+                  ? `📸 Capturing ${imageCount}/100`
+                  : "Register Student"}
+            </button>
+          </div>
+
+          {/* RIGHT SIDE */}
+
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-3xl border-2 border-blue-500 shadow-xl p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+
+                <h3 className="text-2xl font-bold text-slate-800">
+                  Live Camera
+                </h3>
+              </div>
+
+              <Camera
+                capturing={capturing}
+                onCapture={captureFrame}
+                face={face}
+              />
             </div>
           </div>
-
-          <div className={`mt-4 text-center font-semibold ${statusColor}`}>
-            {status}
-          </div>
-
-          <p className="text-gray-500 text-center mt-2">
-            Move your head slowly. Keep only one face in front of the camera.
-          </p>
-
-          <h3 className="font-semibold text-blue-700">Face Dataset</h3>
-
-          <p className="text-gray-600 mt-2">
-            Clicking Register Student will open the camera and capture
-            approximately 100 face images for training.
-          </p>
         </div>
-
-        <button
-          onClick={handleRegister}
-          disabled={loading || capturing}
-          className="mt-8 w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 rounded-xl font-semibold transition"
-        >
-          {loading
-            ? "Starting..."
-            : capturing
-              ? "Capturing Faces..."
-              : "Register Student"}
-        </button>
       </div>
     </div>
   );

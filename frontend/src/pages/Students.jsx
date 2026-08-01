@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaEye, FaTrash, FaEdit } from "react-icons/fa";
+import { FaEye, FaTrash, FaEdit, FaUsers } from "react-icons/fa";
 import ProfileImage from "../components/ProfileImage";
 import EditStudentModal from "../components/EditStudentModal";
 import api from "../services/api";
@@ -28,8 +28,14 @@ export default function Students() {
     loadStudents();
   }, []);
 
-  const filteredStudents = students.filter((student) =>
-    student.name.toLowerCase().includes(search.toLowerCase()),
+  const filteredStudents = students
+  .filter((student) =>
+    student.name.toLowerCase().includes(search.toLowerCase())
+  )
+  .sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, {
+      sensitivity: "base",
+    })
   );
 
   const handleDelete = async (student) => {
@@ -50,134 +56,168 @@ export default function Students() {
   return (
     <div>
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-4xl font-bold text-gray-800">Students</h1>
+          <p className="text-blue-600 font-semibold uppercase tracking-widest text-sm">
+            Student Management
+          </p>
 
-          <p className="text-gray-500 mt-2">Manage all registered students.</p>
+          <h1 className="text-4xl font-bold text-slate-800 mt-2">Students</h1>
+
+          <p className="text-slate-500 mt-2">
+            Manage all registered students in one place.
+          </p>
         </div>
 
         <button
           onClick={() => navigate("/register")}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium shadow-md transition"
+          className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
         >
           + Register Student
         </button>
       </div>
 
-      {/* Search */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 mb-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="relative w-full md:w-96">
+      {/* Search & Student Count */}
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          {/* Search */}
+          <div className="w-full lg:w-[550px] lg:ml-6">
             <input
               type="text"
-              placeholder="Search students..."
+              placeholder="🔍 Search by student name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl py-3 pl-11 pr-4 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-6 py-4 text-slate-700 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all duration-300"
             />
-
-            <svg
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              fill="currentColor"
-              viewBox="0 0 16 16"
-            >
-              <path d="M11.742 10.344a6.5 6.5 0 111.398-1.398l3.85 3.85-1.414 1.414-3.834-3.866z" />
-            </svg>
           </div>
 
-          <div className="bg-blue-50 text-blue-700 px-5 py-3 rounded-xl font-semibold">
-            {filteredStudents.length} Students
+          {/* Student Count */}
+          <div className="flex items-center gap-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl px-6 py-4 shadow-sm">
+            <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+              <FaUsers size={20} />
+            </div>
+
+            <div>
+              <p className="text-xs uppercase tracking-wider text-slate-500">
+                Total Students
+              </p>
+
+              <h2 className="text-2xl font-bold text-slate-800">
+                {filteredStudents.length}
+              </h2>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Students Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-slate-50 text-gray-600 uppercase text-sm border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-4 text-left">Student</th>
-              <th className="px-6 py-4 text-left">Images</th>
-              <th className="px-6 py-4 text-left">Status</th>
-              <th className="px-6 py-4 text-right">Actions</th>
-            </tr>
-          </thead>
+      <div className="grid gap-6">
+        {filteredStudents.length > 0 ? (
+          filteredStudents.map((student, index) => (
+            <div
+              key={index}
+              className="relative bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+            >
+              {/* Left Accent */}
+              <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-blue-600 to-indigo-600"></div>
+              <div className="flex justify-between items-start">
+                {/* Left */}
+                <div className="flex gap-5">
+                  <div className="w-20 h-20">
+                    <ProfileImage studentName={student.name} />
+                  </div>
 
-          <tbody>
-            {filteredStudents.length > 0 ? (
-              filteredStudents.map((student, index) => (
-                <tr
-                  key={index}
-                  className="border-t border-gray-100 hover:bg-blue-50 transition-all duration-200"
-                >
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-4">
-                      <ProfileImage studentName={student.name} />
+                  <div>
+                    <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
+                      {student.name}
+                    </h2>
 
+                    <p className="text-slate-500 mt-1">Registered Student</p>
+                    <p className="text-sm text-slate-400 mt-2">
+                      Registered: {student.createdAt?.split("T")[0] || "N/A"}
+                    </p>
+
+                    <div className="flex gap-10 mt-6">
                       <div>
-                        <h3 className="font-semibold text-gray-800">
-                          {student.name}
-                        </h3>
+                        <p className="text-xs uppercase text-slate-400">
+                          Images
+                        </p>
 
-                        <p className="text-sm text-gray-500">
-                          Registered Student
+                        <p className="font-bold text-2xl text-slate-800">
+                          {student.images}
                         </p>
                       </div>
+
+                      <div>
+                        <p className="text-xs uppercase text-slate-400">
+                          Status
+                        </p>
+
+                        <span className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold">
+                          ● Active
+                        </span>
+                      </div>
                     </div>
-                  </td>
+                  </div>
+                </div>
 
-                  <td className="px-6 py-5">
-                    <span className="font-semibold text-gray-700">
-                      {student.images}
+                {/* Right */}
+                <div className="flex items-center gap-6">
+                  {/* View */}
+                  <div className="flex flex-col items-center">
+                    <button
+                      onClick={() => navigate(`/student/${student._id}`)}
+                      className="w-16 h-16 rounded-2xl bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110"
+                    >
+                      <FaEye size={20} />
+                    </button>
+
+                    <span className="mt-2 text-xs font-medium text-blue-600">
+                      View
                     </span>
-                  </td>
+                  </div>
 
-                  <td className="px-6 py-5">
-                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      Active
+                  {/* Edit */}
+                  <div className="flex flex-col items-center">
+                    <button
+                      onClick={() => setEditingStudent(student)}
+                      className="w-16 h-16 rounded-2xl bg-yellow-100 text-yellow-600 hover:bg-yellow-500 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110"
+                    >
+                      <FaEdit size={20} />
+                    </button>
+
+                    <span className="mt-2 text-xs font-medium text-yellow-600">
+                      Edit
                     </span>
-                  </td>
+                  </div>
 
-                  <td className="px-6 py-5">
-                    <div className="flex justify-end gap-3">
-                      <button
-                        onClick={() => navigate(`/student/${student._id}`)}
-                        className="w-10 h-10 rounded-xl bg-blue-100 hover:bg-blue-600 text-blue-600 hover:text-white transition flex items-center justify-center"
-                      >
-                        <FaEye />
-                      </button>
+                  {/* Delete */}
+                  <div className="flex flex-col items-center">
+                    <button
+                      onClick={() => setStudentToDelete(student)}
+                      className="w-16 h-16 rounded-2xl bg-red-100 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110"
+                    >
+                      <FaTrash size={20} />
+                    </button>
 
-                      <button
-                        onClick={() => setStudentToDelete(student)}
-                        className="w-10 h-10 rounded-xl bg-red-100 hover:bg-red-600 text-red-600 hover:text-white transition flex items-center justify-center"
-                      >
-                        <FaTrash />
-                      </button>
+                    <span className="mt-2 text-xs font-medium text-red-600">
+                      Delete
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-20">
+            <div className="text-6xl mb-4">👨‍🎓</div>
 
-                      <button
-  onClick={() => setEditingStudent(student)}
-  className="w-10 h-10 rounded-xl bg-yellow-100 hover:bg-yellow-500 text-yellow-600 hover:text-white transition flex items-center justify-center"
->
-  <FaEdit />
-</button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="py-12 text-center text-gray-500">
-                  No students found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            <h2 className="text-2xl font-bold">No Students Found</h2>
+
+            <p className="text-slate-500 mt-2">
+              Register your first student to get started.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Student Details Modal */}
