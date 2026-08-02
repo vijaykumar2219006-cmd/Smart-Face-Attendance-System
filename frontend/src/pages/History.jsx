@@ -260,21 +260,24 @@ export default function History() {
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         {/* Total Records */}
-        <div className="bg-white rounded-xl shadow-md p-5">
-          <div className="flex items-center justify-between">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6">
+          <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500">Total Records</p>
-              <h2 className="text-3xl font-bold mt-2">
+              <p className="text-slate-500 text-sm">Total Attendance Records</p>
+
+              <h2 className="text-5xl font-bold text-indigo-600 mt-3">
                 {filteredRecords.length}
               </h2>
+
+              <p className="text-slate-400 text-sm mt-2">Records Available</p>
             </div>
 
-            <FaUserCheck className="text-4xl text-green-500" />
+            <FaUserCheck className="text-5xl text-green-500" />
           </div>
         </div>
 
         {/* Search */}
-        <div className="bg-white rounded-xl shadow-md p-5 flex items-center gap-3">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-5 flex items-center gap-3">
           <FaSearch className="text-gray-400" />
 
           <input
@@ -282,7 +285,7 @@ export default function History() {
             placeholder="Search student..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full outline-none"
+            className="w-full bg-transparent outline-none text-slate-700 placeholder:text-slate-400"
           />
         </div>
 
@@ -296,7 +299,7 @@ export default function History() {
             type="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="border rounded-lg px-3 py-2 w-full"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 focus:ring-2 focus:ring-indigo-200 outline-none"
           />
         </div>
 
@@ -309,7 +312,7 @@ export default function History() {
             }}
             className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition"
           >
-            Clear Filters
+            🧹Clear Filters
           </button>
 
           <button
@@ -344,11 +347,12 @@ export default function History() {
           <div className="p-8 text-center text-gray-500">Loading...</div>
         ) : filteredRecords.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
-            No attendance records found.
+            📂 No attendance records found Register students and mark attendance
+            to view history.
           </div>
         ) : (
           <table className="w-full">
-            <thead className="bg-indigo-600 text-white">
+            <thead className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
               <tr>
                 <th className="py-4 px-6 text-left">Student</th>
                 <th className="py-4 px-6 text-left">Date</th>
@@ -362,7 +366,7 @@ export default function History() {
               {filteredRecords.map((record, index) => (
                 <tr
                   key={index}
-                  className="border-b hover:bg-gray-50 transition"
+                  className="border-b border-slate-100 hover:bg-indigo-50 transition-all duration-200"
                 >
                   <td className="py-4 px-6 font-medium">{record.name}</td>
 
@@ -385,7 +389,7 @@ export default function History() {
                         setSelectedRecord(record);
                         setShowDeleteModal(true);
                       }}
-                      className="text-red-600 hover:text-red-800 transition"
+                      className="w-10 h-10 rounded-full bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center mx-auto transition"
                     >
                       <FaTrash />
                     </button>
