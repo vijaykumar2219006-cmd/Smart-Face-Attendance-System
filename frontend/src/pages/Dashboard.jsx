@@ -30,6 +30,7 @@ export default function Dashboard() {
   });
 
   const [chartData, setChartData] = useState([]);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
@@ -52,6 +53,14 @@ export default function Dashboard() {
 
     loadDashboardData();
   }, []);
+
+  useEffect(() => {
+  const timer = setInterval(() => {
+    setCurrentTime(new Date());
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, []);
 
   if (loading) {
     return (
@@ -101,10 +110,11 @@ export default function Dashboard() {
               </p>
 
               <p className="mt-3 text-xl font-semibold">
-                {new Date().toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {currentTime.toLocaleTimeString([], {
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+})}
               </p>
             </div>
 

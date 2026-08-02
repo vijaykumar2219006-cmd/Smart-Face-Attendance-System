@@ -9,6 +9,7 @@ import {
   FaFileExcel,
   FaPrint,
   FaTrash,
+  FaCheckCircle,
 } from "react-icons/fa";
 import toast from "react-hot-toast";
 import DeleteAttendanceModal from "../components/DeleteAttendanceModal";
@@ -258,97 +259,134 @@ export default function History() {
       </div>
 
       {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         {/* Total Records */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-6">
+        <div className="lg:col-span-3 bg-white rounded-3xl border border-slate-200 shadow-lg p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-slate-500 text-sm">Total Attendance Records</p>
 
-              <h2 className="text-5xl font-bold text-indigo-600 mt-3">
+              <h2 className="text-4xl font-bold text-indigo-600 mt-3">
                 {filteredRecords.length}
               </h2>
 
               <p className="text-slate-400 text-sm mt-2">Records Available</p>
             </div>
 
-            <FaUserCheck className="text-5xl text-green-500" />
+            <FaUserCheck className="text-3xl text-green-500" />
           </div>
         </div>
 
         {/* Search */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-5 flex items-center gap-3">
-          <FaSearch className="text-gray-400" />
+        <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200 shadow-lg p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-blue-600 text-xl">🔍</span>
 
-          <input
-            type="text"
-            placeholder="Search student..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-transparent outline-none text-slate-700 placeholder:text-slate-400"
-          />
+            <h3 className="text-lg font-bold text-slate-800">Search Student</h3>
+          </div>
+
+          <p className="text-sm text-slate-500 mb-4">
+            Quickly find attendance records by student name.
+          </p>
+
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search student..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none"
+            />
+          </div>
         </div>
 
         {/* Date Filter */}
-        <div className="bg-white rounded-xl shadow-md p-5 flex items-center gap-3">
-          <label className="text-gray-600 font-medium whitespace-nowrap">
-            Date
-          </label>
+        <div className="lg:col-span-4 bg-white rounded-3xl border border-slate-200 shadow-lg p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xl">📅</span>
+
+            <h3 className="text-lg font-bold text-slate-800">Filter by Date</h3>
+          </div>
+
+          <p className="text-sm text-slate-500 mb-4">
+            Select attendance records for a specific day.
+          </p>
 
           <input
             type="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 focus:ring-2 focus:ring-indigo-200 outline-none"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none"
           />
         </div>
 
-        {/* Actions */}
-        <div className="bg-white rounded-xl shadow-md p-5 flex flex-col gap-3 justify-center">
-          <button
-            onClick={() => {
-              setSearch("");
-              setSelectedDate("");
-            }}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition"
-          >
-            🧹Clear Filters
-          </button>
+        {/* Quick Actions */}
+        <div className="lg:col-span-12 bg-white rounded-3xl border border-slate-200 shadow-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-slate-800">
+                Quick Actions
+              </h3>
 
-          <button
-            onClick={exportCSV}
-            className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition"
-          >
-            <FaFileCsv />
-            Export CSV
-          </button>
+              <p className="text-slate-500 text-sm">
+                Export attendance reports or clear applied filters.
+              </p>
+            </div>
 
-          <button
-            onClick={exportExcel}
-            className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg transition"
-          >
-            <FaFileExcel />
-            Export Excel
-          </button>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => {
+                  setSearch("");
+                  setSelectedDate("");
+                }}
+                className="flex items-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold transition"
+              >
+                🧹 Clear Filters
+              </button>
 
-          <button
-            onClick={printReport}
-            className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition"
-          >
-            <FaPrint />
-            Print Report
-          </button>
+              <button
+                onClick={exportCSV}
+                className="flex items-center gap-2 px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition"
+              >
+                <FaFileCsv />
+                Export CSV
+              </button>
+
+              <button
+                onClick={exportExcel}
+                className="flex items-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold transition"
+              >
+                <FaFileExcel />
+                Export Excel
+              </button>
+
+              <button
+                onClick={printReport}
+                className="flex items-center gap-2 px-5 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition"
+              >
+                <FaPrint />
+                Print Report
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <div className="mt-8 overflow-x-auto bg-white rounded-3xl border border-slate-200 shadow-lg">
         {loading ? (
           <div className="p-8 text-center text-gray-500">Loading...</div>
         ) : filteredRecords.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            📂 No attendance records found Register students and mark attendance
-            to view history.
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="text-6xl mb-4">📂</div>
+
+            <h3 className="text-2xl font-bold text-slate-700">
+              No Attendance Records
+            </h3>
+
+            <p className="text-slate-500 mt-2">
+              Register students and mark attendance to see history here.
+            </p>
           </div>
         ) : (
           <table className="w-full">
@@ -358,7 +396,7 @@ export default function History() {
                 <th className="py-4 px-6 text-left">Date</th>
                 <th className="py-4 px-6 text-left">Time</th>
                 <th className="py-4 px-6 text-left">Status</th>
-                <th className="py-4 px-6 text-center">Action</th>
+                <th className="py-4 px-6 text-left">Action</th>
               </tr>
             </thead>
 
@@ -366,9 +404,13 @@ export default function History() {
               {filteredRecords.map((record, index) => (
                 <tr
                   key={index}
-                  className="border-b border-slate-100 hover:bg-indigo-50 transition-all duration-200"
+                  className={`border-b border-slate-100 hover:bg-indigo-50 transition-all duration-200 ${
+                    index % 2 === 0 ? "bg-white" : "bg-slate-50"
+                  }`}
                 >
-                  <td className="py-4 px-6 font-medium">{record.name}</td>
+                  <td className="py-4 px-6 font-medium">
+                    {record.name.charAt(0).toUpperCase() + record.name.slice(1)}
+                  </td>
 
                   <td className="py-4 px-6">
                     {String(record.date).substring(0, 10)}
@@ -377,19 +419,20 @@ export default function History() {
                   <td className="py-4 px-6">{record.time}</td>
 
                   <td className="py-4 px-6">
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                    <span className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                      <FaCheckCircle />
                       Present
                     </span>
                   </td>
 
                   {/* New Action Column */}
-                  <td className="py-4 px-6 text-center">
+                  <td className="py-4 px-6 text-left">
                     <button
                       onClick={() => {
                         setSelectedRecord(record);
                         setShowDeleteModal(true);
                       }}
-                      className="w-10 h-10 rounded-full bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center mx-auto transition"
+                      className="w-10 h-10 rounded-full bg-red-50 text-red-600 hover:bg-red-100 hover:scale-110 transition-all duration-300 flex items-center justify-center mx-auto"
                     >
                       <FaTrash />
                     </button>
