@@ -14,6 +14,7 @@ import {
   // FaCalendarAlt,
 } from "react-icons/fa";
 import ProfileImage from "../components/ProfileImage";
+import DashboardSkeleton from "../components/DashboardSkeleton";
 
 import { useNavigate } from "react-router-dom";
 
@@ -55,19 +56,15 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-  const timer = setInterval(() => {
-    setCurrentTime(new Date());
-  }, 1000);
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
 
-  return () => clearInterval(timer);
-}, []);
+    return () => clearInterval(timer);
+  }, []);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[70vh]">
-        <div className="w-14 h-14 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (
@@ -111,10 +108,10 @@ export default function Dashboard() {
 
               <p className="mt-3 text-xl font-semibold">
                 {currentTime.toLocaleTimeString([], {
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
-})}
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                })}
               </p>
             </div>
 
@@ -251,7 +248,7 @@ export default function Dashboard() {
 
             {stats.recentAttendance?.length > 0 ? (
               <div className="space-y-4">
-                {stats.recentAttendance.map((student, index) => (
+                {stats.recentAttendance.slice(0, 2).map((student, index) => (
                   <div
                     key={index}
                     className="border border-slate-200 rounded-2xl p-5 hover:shadow-lg hover:border-blue-200 transition-all duration-300"
@@ -307,8 +304,26 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-16 text-slate-500">
-                No attendance records found.
+              <div className="flex flex-col items-center justify-center py-16">
+                <div className="w-24 h-24 rounded-full bg-blue-50 flex items-center justify-center text-5xl mb-6">
+                  📋
+                </div>
+
+                <h2 className="text-2xl font-bold text-slate-800">
+                  No Attendance Records
+                </h2>
+
+                <p className="text-slate-500 mt-3 text-center max-w-sm">
+                  Attendance records will appear here after students
+                  successfully mark their attendance.
+                </p>
+
+                <button
+                  onClick={() => navigate("/attendance")}
+                  className="mt-6 px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Mark Attendance
+                </button>
               </div>
             )}
           </div>

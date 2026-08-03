@@ -8,6 +8,7 @@ import Students from "./pages/Students";
 import History from "./pages/History";
 import Login from "./pages/Login";
 import StudentProfile from "./pages/StudentProfile";
+import NotFound from "./pages/NotFound";
 
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -37,6 +38,7 @@ function App() {
           <Route path="/student/:id" element={<StudentProfile />} />
         </Route>
 
+          <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
