@@ -26,7 +26,7 @@ const menuItems = [
 
 export default function Sidebar() {
   return (
-    <aside className="w-72 h-screen bg-white border-r border-slate-200 flex flex-col shadow-xl">
+    <aside className="fixed top-0 left-0 w-72 h-screen bg-white border-r border-slate-200 flex flex-col shadow-xl z-50">
       {/* Logo */}
       <div className="px-6 py-7 border-b border-slate-200">
         <div className="flex items-center gap-4">
@@ -46,7 +46,7 @@ export default function Sidebar() {
 
       {/* Navigation */}
 
-      <nav className="flex-1 px-4 py-6 space-y-3">
+      <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-3">
         {menuItems.map((item) => (
           <NavLink
             key={item.name}
@@ -69,7 +69,21 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      
+      {/* Footer */}
+      <div className="border-t border-slate-200 px-6 py-4">
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500"></span>
+            <span className="text-sm font-medium text-green-600">
+              System Online
+            </span>
+          </div>
+
+          <p className="text-xs text-slate-400 mt-2">
+            Smart Face Attendance • v1.0
+          </p>
+        </div>
+      </div>
     </aside>
   );
 }

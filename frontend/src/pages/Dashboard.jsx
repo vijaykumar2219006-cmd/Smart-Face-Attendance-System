@@ -68,9 +68,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-5">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div>
           <h1 className="text-4xl font-bold text-gray-800">
             Good{" "}
@@ -84,6 +84,11 @@ export default function Dashboard() {
 
           <p className="text-gray-500 mt-2">
             Welcome back! Here's today's attendance overview.
+            
+          </p>
+          <p className="text-gray-500 mt-2">
+            Ready to manage today's attendance efficiently.
+            
           </p>
         </div>
 
@@ -123,7 +128,7 @@ export default function Dashboard() {
       </div>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         <StatCard
           title="Total Students"
           value={stats.totalStudents}
