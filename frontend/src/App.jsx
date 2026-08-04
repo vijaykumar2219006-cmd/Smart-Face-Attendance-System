@@ -9,6 +9,7 @@ import History from "./pages/History";
 import Login from "./pages/Login";
 import StudentProfile from "./pages/StudentProfile";
 import NotFound from "./pages/NotFound";
+import Settings from "./pages/Settings";
 
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -36,6 +37,7 @@ function App() {
           <Route path="/students" element={<Students />} />
           <Route path="/history" element={<History />} />
           <Route path="/student/:id" element={<StudentProfile />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
 
           <Route path="*" element={<NotFound />} />

@@ -1,4 +1,4 @@
-import { FaBell, FaUserCircle, FaSignOutAlt } from "react-icons/fa";
+import { FaCog, FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
@@ -7,11 +7,7 @@ export default function Navbar() {
   const hour = new Date().getHours();
 
   const greeting =
-    hour < 12
-      ? "Good Morning"
-      : hour < 18
-      ? "Good Afternoon"
-      : "Good Evening";
+    hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
 
   const username = localStorage.getItem("username") || "Admin";
 
@@ -24,7 +20,6 @@ export default function Navbar() {
 
   return (
     <header className="h-20 bg-white border-b border-gray-200 px-8 flex items-center justify-between">
-
       {/* Left */}
       <div>
         <h1 className="text-2xl font-bold text-gray-800">
@@ -38,14 +33,12 @@ export default function Navbar() {
 
       {/* Right */}
       <div className="flex items-center gap-5">
-
         {/* Notification */}
-        <button className="relative w-11 h-11 rounded-xl bg-gray-100 hover:bg-gray-200 transition flex items-center justify-center">
-
-          <FaBell className="text-gray-600" />
-
-          <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full"></span>
-
+        <button
+          onClick={() => navigate("/settings")}
+          className="w-12 h-12 bg-gray-100 hover:bg-indigo-100 rounded-xl flex items-center justify-center transition-all duration-300 group"
+        >
+          <FaCog className="text-gray-600 group-hover:text-indigo-600 text-lg" />
         </button>
 
         {/* Divider */}
@@ -53,22 +46,13 @@ export default function Navbar() {
 
         {/* Profile */}
         <div className="flex items-center gap-3">
-
-          <FaUserCircle
-            size={40}
-            className="text-blue-600"
-          />
+          <FaUserCircle size={40} className="text-blue-600" />
 
           <div>
-            <p className="font-semibold text-gray-800">
-              {username}
-            </p>
+            <p className="font-semibold text-gray-800">{username}</p>
 
-            <p className="text-sm text-gray-500">
-              Administrator
-            </p>
+            <p className="text-sm text-gray-500">Administrator</p>
           </div>
-
         </div>
 
         {/* Logout */}
@@ -79,9 +63,7 @@ export default function Navbar() {
           <FaSignOutAlt />
           Logout
         </button>
-
       </div>
-
     </header>
   );
 }

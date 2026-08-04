@@ -6,6 +6,7 @@ import {
   FaCamera,
   FaHistory,
   FaBolt,
+  FaCog,
 } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
@@ -16,6 +17,11 @@ const menuItems = [
   { name: "Train", icon: <FaBrain />, path: "/train" },
   { name: "Attendance", icon: <FaCamera />, path: "/attendance" },
   { name: "History", icon: <FaHistory />, path: "/history" },
+  {
+    name: "Settings",
+    path: "/settings",
+    icon: <FaCog />,
+  },
 ];
 
 export default function Sidebar() {
@@ -63,23 +69,7 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Footer */}
-
-      <div className="p-5 border-t border-slate-200">
-        <div className="rounded-2xl bg-gradient-to-r from-slate-50 to-indigo-50 p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold text-lg shadow-md">
-              A
-            </div>
-
-            <div>
-              <p className="font-semibold text-slate-800">Administrator</p>
-
-              <p className="text-sm text-slate-500">Face Recognition System</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </aside>
   );
 }
