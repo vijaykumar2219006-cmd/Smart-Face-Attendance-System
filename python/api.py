@@ -3,11 +3,10 @@ from database import students_collection, attendance_collection
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
-from modules.attendance_frame import load_model
+from modules.attendance_frame import load_model,process_attendance_frame
 
 from modules.register_frame import process_frame
 
-from modules.attendance_frame import process_attendance_frame
 
 from modules.register_session import start_registration
 
@@ -21,7 +20,7 @@ from passlib.hash import bcrypt
 from database import admins_collection
 from config import SECRET_KEY, JWT_ALGORITHM, JWT_EXPIRATION_HOURS
 
-from flask import Flask, jsonify
+
 from flask import send_file
 from flask_cors import CORS
 import os
@@ -260,7 +259,7 @@ def get_student(student_id):
         "_id": ObjectId(student_id)
     })
 
-    print("Student:", student)
+   
     try:
         student = students_collection.find_one({
             "_id": ObjectId(student_id)
@@ -440,9 +439,7 @@ def dashboard_stats():
             "status": record.get("status", "Present")
         })
 
-    print("Total Students:", total_students)
-    print("Total Attendance:", total_attendance)
-    print("Today's Attendance:", today_attendance)
+    
 
     return jsonify({
         "totalStudents": total_students,
@@ -489,8 +486,7 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
-    print("Username:", username)
-    print("Password:", password)
+   
 
     if not username or not password:
         return jsonify({
@@ -504,7 +500,7 @@ def login():
 
     admin = admins_collection.find_one({"username": username})
 
-    print("Admin Found:", admin)
+   
 
     if not admin:
         return jsonify({
@@ -512,7 +508,7 @@ def login():
             "message": "Invalid username or password."
         }), 401
 
-    print("Password Match:", bcrypt.verify(password, admin["password"]))
+   
 
     if not bcrypt.verify(password, admin["password"]):
         return jsonify({

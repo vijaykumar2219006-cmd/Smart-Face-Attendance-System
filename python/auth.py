@@ -9,10 +9,9 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
 
-        auth_header = request.headers.get("Authorization")
 
         auth_header = request.headers.get("Authorization")
-        print(auth_header)
+        
 
         if not auth_header:
             return jsonify({

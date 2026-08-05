@@ -3,12 +3,22 @@ python/venv/
 __pycache__/
 *.pyc
 
+# Dataset (captured faces)
+python/dataset/
+
+# Attendance records
+python/attendance/
+
+# Trained model
+python/models/
+
 # Node.js
 frontend/node_modules/
 backend/node_modules/
 
 # Environment variables
 .env
+python/.env
 
 # VS Code
 .vscode/

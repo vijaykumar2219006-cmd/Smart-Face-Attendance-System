@@ -1,7 +1,17 @@
 import os
-import os
+from dotenv import load_dotenv
 
-SECRET_KEY = "your_super_secret_key_change_this"
+load_dotenv()
+
+MONGO_URI = os.getenv("MONGO_URI")
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY not found in .env")
+
+if not MONGO_URI:
+    raise ValueError("MONGO_URI not found in .env")
 
 JWT_ALGORITHM = "HS256"
 
