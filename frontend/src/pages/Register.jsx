@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import toast from "react-hot-toast";
 import Camera from "../components/Camera";
-// import Camera from "../components/Camera";
+
 
 export default function RegisterStudent() {
   const [face, setFace] = useState(null);
@@ -11,7 +11,7 @@ export default function RegisterStudent() {
   const [statusColor, setStatusColor] = useState("text-gray-500");
   const [capturing, setCapturing] = useState(false);
   const [imageCount, setImageCount] = useState(0);
-  // const [webcamRef, setWebcamRef] = useState(null);
+  
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
