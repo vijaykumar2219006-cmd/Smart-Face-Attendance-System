@@ -70,7 +70,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6">
         <div>
           <h1 className="text-4xl font-bold text-gray-800">
             Good{" "}
@@ -92,7 +92,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl text-white px-6 py-5 shadow-xl min-w-[260px]">
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl text-white px-5 py-5 shadow-xl w-full sm:w-auto sm:min-w-[260px]">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-indigo-100">Today</p>
