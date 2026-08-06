@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 MONGO_URI = os.getenv("MONGO_URI")
 
@@ -13,7 +13,7 @@ if not SECRET_KEY:
 if not MONGO_URI:
     raise ValueError("MONGO_URI not found in .env")
 
-JWT_ALGORITHM = "HS256"
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
 JWT_EXPIRATION_HOURS = 24
 

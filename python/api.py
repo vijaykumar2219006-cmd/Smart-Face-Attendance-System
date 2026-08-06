@@ -1,38 +1,30 @@
+import os
 import csv
+import jwt
+import shutil
+from bson import ObjectId
+from auth import token_required
+from flask_jwt_extended import JWTManager       
+
+
 from database import students_collection, attendance_collection
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
 from modules.attendance_frame import load_model,process_attendance_frame
-
 from modules.register_frame import process_frame
-
-
 from modules.register_session import start_registration
-
-from bson import ObjectId
-import jwt
-
-from auth import token_required
+from modules.register_student import register_student
+from modules.train_model import train_model
+from modules.attendance import mark_attendance
 
 from passlib.hash import bcrypt
 
 from database import admins_collection
-from config import SECRET_KEY, JWT_ALGORITHM, JWT_EXPIRATION_HOURS
+from config import SECRET_KEY, JWT_ALGORITHM, JWT_EXPIRATION_HOURS, DATASET_PATH, ATTENDANCE_FILE, MODEL_FILE
 
-
-from flask import send_file
 from flask_cors import CORS
-import os
-from flask import Flask, jsonify, request
-from modules.register_student import register_student
-from modules.train_model import train_model
-from modules.attendance import mark_attendance
-import shutil
-
-from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
-
-from config import DATASET_PATH, ATTENDANCE_FILE, MODEL_FILE
+from flask import Flask, jsonify, request, send_file
 
 app = Flask(__name__)
 
@@ -174,8 +166,6 @@ def attendance_count():
 @token_required
 def model_status():
 
-    import os
-
     if os.path.exists(MODEL_FILE):
 
         return jsonify({
@@ -254,11 +244,6 @@ def delete_student(student_name):
 def get_student(student_id):
 
     print("Student ID received:", student_id)
-
-    student = students_collection.find_one({
-        "_id": ObjectId(student_id)
-    })
-
    
     try:
         student = students_collection.find_one({
@@ -286,7 +271,10 @@ def get_student(student_id):
         })
 
     except Exception as e:
-        return jsonify({"message": str(e)}), 500
+        return jsonify({
+    "success": False,
+    "message": "Internal server error."
+}), 500
 
 @app.route("/student/<student_id>", methods=["PUT"])
 @token_required
@@ -494,9 +482,6 @@ def login():
             "message": "Username and password are required."
         }), 400
 
-    admin = admins_collection.find_one({
-        "username": username
-    })
 
     admin = admins_collection.find_one({"username": username})
 

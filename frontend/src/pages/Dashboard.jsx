@@ -11,7 +11,6 @@ import {
   FaClock,
   FaBullseye,
   FaArrowRight,
-  // FaCalendarAlt,
 } from "react-icons/fa";
 import ProfileImage from "../components/ProfileImage";
 import DashboardSkeleton from "../components/DashboardSkeleton";
@@ -226,7 +225,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Recent Attendance */}
         {/* Recent Attendance */}
         <div className="xl:col-span-2">
           <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-6">
