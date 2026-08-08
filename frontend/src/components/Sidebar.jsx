@@ -9,6 +9,7 @@ import {
   FaCog,
 } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import logo from "../assets/smart-face-logo.png";
 
 const menuItems = [
   { name: "Dashboard", icon: <FaHome />, path: "/" },
@@ -46,9 +47,13 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
         {/* Logo */}
         <div className="px-6 py-7 border-b border-slate-200">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center justify-center text-xl shadow-lg">
-              <FaBolt />
-            </div>
+            {/* <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center justify-center text-xl shadow-lg"> */}
+              <img
+                src={logo}
+                alt="Smart Face Attendance"
+                className="w-14 h-14 object-contain"
+              />
+            {/* </div> */}
 
             <div>
               <h1 className="text-xl font-bold text-slate-800">
